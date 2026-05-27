@@ -1,0 +1,37 @@
+﻿{% extends "base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<article class="detail-card reveal">
+    {% if book.cover %}
+        <img class="detail-cover" src="{{ book.cover.url }}" alt="{{ book.title }}">
+    {% endif %}
+    <div>
+        <p class="eyebrow">Now Playing</p>
+        <h1>{{ book.title }}</h1>
+        <p><strong>Artist:</strong> {{ book.author }}</p>
+        <p>{{ book.description }}</p>
+
+        <div class="player-panel">
+            {% if book.audio_file %}
+                <audio id="audio-player" preload="metadata">
+                    <source src="{{ book.audio_file.url }}">
+                    Your browser does not support audio playback.
+                </audio>
+                <div class="wave" id="audio-wave"></div>
+                <div class="controls">
+                    <button type="button" class="btn control-btn" data-action="back">-10s</button>
+                    <button type="button" class="btn control-btn" data-action="toggle">Play</button>
+                    <button type="button" class="btn control-btn" data-action="forward">+10s</button>
+                </div>
+                <p id="audio-time" class="audio-time">00:00 / 00:00</p>
+            {% else %}
+                <p class="audio-time">No audio uploaded for this track yet.</p>
+            {% endif %}
+        </div>
+
+        <a class="btn" href="{% url 'home' %}">Back to tracks</a>
+    </div>
+</article>
+{% endblock %}

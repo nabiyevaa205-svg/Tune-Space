@@ -1,0 +1,47 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TuneSpace{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="noise-bg" aria-hidden="true"></div>
+    {% block header %}
+    <header class="site-header">
+        <div class="container nav-wrap">
+            <a class="brand" href="{% url 'home' %}">TuneSpace</a>
+            <nav>
+                <a href="{% url 'home' %}">Tracks</a>
+                <a href="{% url 'about' %}">About</a>
+                {% if user.is_authenticated %}
+                    <span class="user-name">Hi, {{ user.username }}!</span>
+                    <form action="{% url 'logout' %}" method="post" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">Log out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Log in</a>
+                    <a href="{% url 'register' %}">Sign up</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    {% endblock %}
+
+    <main class="container content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="site-footer">
+        <div class="container">2026 TuneSpace | Pick the right vibe for your day</div>
+    </footer>
+    {% endblock %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

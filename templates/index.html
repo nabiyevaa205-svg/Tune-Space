@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Template Demo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Welcome, {{ name|upper }}!</h1>
+
+    <h2>Skills list</h2>
+    <ul>
+        {% for item in items %}
+        <li>{{ forloop.counter }}. {{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if status == 'admin' %}
+    <p>You have administrator access.</p>
+    {% elif status == 'student' %}
+    <p>You are viewing the student version of this page.</p>
+    {% else %}
+    <p>Welcome, guest user.</p>
+    {% endif %}
+</section>
+{% endblock %}

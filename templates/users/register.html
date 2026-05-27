@@ -1,0 +1,46 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Sign up | TuneSpace{% endblock %}
+
+{% block content %}
+<section class="auth-wrap reveal">
+    <form class="auth-form" method="post" id="auth-form">
+        <p class="eyebrow">Registration</p>
+        <h1>Create a new account</h1>
+        <p class="auth-subtitle">Build your music profile in a few seconds.</p>
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-row">
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            {{ form.username }}
+            {% if form.username.errors %}<small class="field-error">{{ form.username.errors|striptags }}</small>{% endif %}
+        </div>
+
+        <div class="form-row">
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            {{ form.email }}
+            {% if form.email.errors %}<small class="field-error">{{ form.email.errors|striptags }}</small>{% endif %}
+        </div>
+
+        <div class="form-row">
+            <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}<small class="field-error">{{ form.password1.errors|striptags }}</small>{% endif %}
+        </div>
+
+        <div class="form-row">
+            <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}<small class="field-error">{{ form.password2.errors|striptags }}</small>{% endif %}
+        </div>
+
+        <button class="btn btn-primary" type="submit">Sign up</button>
+        <p class="auth-note">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    </form>
+</section>
+{% endblock %}

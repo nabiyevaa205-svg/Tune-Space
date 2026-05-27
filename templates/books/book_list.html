@@ -1,0 +1,108 @@
+﻿{% extends "base.html" %}
+
+{% block title %}TuneSpace | Music Platform{% endblock %}
+
+{% block content %}
+<section class="hero hero-wide reveal">
+    <div>
+        <p class="eyebrow">Trending Track</p>
+        {% if featured %}
+            <h1>{{ featured.title }}</h1>
+            <p class="hero-meta">{{ featured.author }} | TuneSpace Picks 2026</p>
+            <p class="hero-text">{{ featured.description|truncatechars:130 }}</p>
+            <a class="btn" href="{% url 'book_detail' featured.pk %}">Open Player</a>
+        {% else %}
+            <h1>Golden Evening Session</h1>
+            <p class="hero-meta">TuneSpace Curated Collection</p>
+            <p class="hero-text">Add tracks from admin panel and this section will auto-update.</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section-block reveal">
+    <h2 class="section-title">Latest <span>Events</span></h2>
+    <div class="event-grid">
+        {% for event in events %}
+            <article class="event-card {{ event.skin }}">
+                <div class="event-date">{{ event.date }}</div>
+                <h3>{{ event.title }}</h3>
+                <p>{{ event.place }}</p>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-block reveal">
+    <h2 class="section-title">Latest <span>Songs</span></h2>
+    <div class="song-row" id="track-grid">
+        {% if latest_songs %}
+            {% for book in latest_songs %}
+                <article class="song-card" data-track="{{ book.title|lower }}" data-artist="{{ book.author|lower }}">
+                    {% if book.cover %}
+                        <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                    {% else %}
+                        <div class="mini-thumb skin-{{ forloop.counter }}"></div>
+                    {% endif %}
+                    <h4>{{ book.title }}</h4>
+                    <p>{{ book.author }}</p>
+                    {% if book.audio_file %}<span class="play-badge">Playable</span>{% else %}<span class="play-badge muted">No audio</span>{% endif %}<a class="mini-link" href="{% url 'book_detail' book.pk %}">Open</a>
+                </article>
+            {% endfor %}
+        {% else %}
+            <p>No songs yet. Add tracks from admin panel.</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="split section-block reveal">
+    <div class="panel">
+        <h2 class="section-title">Top <span>Albums</span></h2>
+        <div class="album-table">
+            <div class="album-head">
+                <span>#</span><span>Track / Artist</span><span>Genre</span><span>Hit</span>
+            </div>
+            {% for album in top_albums %}
+                <div class="album-row">
+                    <span>{{ forloop.counter|stringformat:"02d" }}</span>
+                    <span class="album-track">
+                        {% if album.cover %}
+                            <img class="album-thumb" src="{{ album.cover.url }}" alt="{{ album.title }}">
+                        {% else %}
+                            <span class="album-thumb placeholder-thumb"></span>
+                        {% endif %}
+                        <span>{{ album.title }} <small>{{ album.author }}</small></span>
+                    </span>
+                    <span>{% cycle 'Pop' 'Rock' 'Indie' 'Jazz' 'Video' %}</span>
+                    <span>{% cycle '212' '195' '169' '153' '103' %}</span>
+                </div>
+            {% empty %}
+                <div class="album-row"><span>--</span><span>No tracks</span><span>--</span><span>--</span></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2 class="section-title">Latest <span>Videos</span></h2>
+        <div class="video-grid">
+            {% for video in videos %}
+                <article class="video-card {{ video.skin }}">
+                    <h4>{{ video.title }}</h4>
+                    <p>{{ video.artist }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section-block reveal">
+    <h2 class="section-title">Latest <span>Posts</span></h2>
+    <div class="post-grid">
+        {% for post in posts %}
+            <article class="post-card {{ post.skin }}">
+                <p>{{ post.date }}</p>
+                <h4>{{ post.title }}</h4>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
