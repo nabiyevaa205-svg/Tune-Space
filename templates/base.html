@@ -9,6 +9,11 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <div class="lang-switcher">
+    <button onclick="setLang('kz')">ҚАЗ</button>
+    <button onclick="setLang('ru')">РУС</button>
+    <button onclick="setLang('en')">ENG</button>
+</div>
     <div class="noise-bg" aria-hidden="true"></div>
     {% block header %}
     <header class="site-header">

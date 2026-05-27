@@ -442,3 +442,25 @@ nav a { color: var(--text); text-decoration: none; font-weight: 600; }
 .auth-note a {
     color: #b4f5ff;
 }
+.lang-switcher {
+    display: flex;
+    gap: 8px;
+    margin-left: 16px;
+}
+
+.lang-switcher button {
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.lang-switcher button:hover {
+    background: #8df7ff;
+    color: #111430;
+}
