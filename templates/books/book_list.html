@@ -5,16 +5,16 @@
 {% block content %}
 <section class="hero hero-wide reveal">
     <div class="hero-copy">
-        <p class="eyebrow">Trending Track</p>
+        <p class="eyebrow">{{ ui.trending_track }}</p>
         {% if featured %}
             <h1>{{ featured.title }}</h1>
-            <p class="hero-meta">{{ featured.author }} | TuneSpace Picks 2026</p>
+            <p class="hero-meta">{{ featured.author }} | TuneSpace 2026</p>
             <p class="hero-text">{{ featured.description|truncatechars:130 }}</p>
-            <a class="btn" href="{% url 'book_detail' featured.pk %}">Open Player</a>
+            <a class="btn" href="{% url 'book_detail' featured.pk %}">{{ ui.open_player }}</a>
         {% else %}
-            <h1>Golden Evening Session</h1>
-            <p class="hero-meta">TuneSpace Curated Collection</p>
-            <p class="hero-text">Add tracks from admin panel and this section will auto-update.</p>
+            <h1>{{ ui.fallback_title }}</h1>
+            <p class="hero-meta">{{ ui.fallback_meta }}</p>
+            <p class="hero-text">{{ ui.fallback_text }}</p>
         {% endif %}
     </div>
     <div class="hero-art" aria-hidden="true">
@@ -27,7 +27,7 @@
 </section>
 
 <section class="section-block reveal">
-    <h2 class="section-title">Latest <span>Events</span></h2>
+    <h2 class="section-title">{{ ui.latest_events }} <span>{{ ui.events }}</span></h2>
     <div class="event-grid">
         {% for event in events %}
             <article class="event-card {{ event.skin }}">
@@ -40,7 +40,7 @@
 </section>
 
 <section class="section-block reveal">
-    <h2 class="section-title">Latest <span>Songs</span></h2>
+    <h2 class="section-title">{{ ui.latest_songs }} <span>{{ ui.songs }}</span></h2>
     <div class="song-row" id="track-grid">
         {% if latest_songs %}
             {% for book in latest_songs %}
@@ -54,26 +54,26 @@
                     <p>{{ book.author }}</p>
                     <div class="song-actions">
                         {% if book.audio_file %}
-                            <span class="play-badge">Playable</span>
+                            <span class="play-badge">{{ ui.playable }}</span>
                         {% else %}
-                            <span class="play-badge muted">No audio</span>
+                            <span class="play-badge muted">{{ ui.no_audio }}</span>
                         {% endif %}
-                        <a class="mini-link" href="{% url 'book_detail' book.pk %}">Open</a>
+                        <a class="mini-link" href="{% url 'book_detail' book.pk %}">{{ ui.open }}</a>
                     </div>
                 </article>
             {% endfor %}
         {% else %}
-            <p>No songs yet. Add tracks from admin panel.</p>
+            <p>{{ ui.no_songs }}</p>
         {% endif %}
     </div>
 </section>
 
 <section class="split section-block reveal">
     <div class="panel">
-        <h2 class="section-title">Top <span>Albums</span></h2>
+        <h2 class="section-title">{{ ui.top }} <span>{{ ui.albums }}</span></h2>
         <div class="album-table">
             <div class="album-head">
-                <span>#</span><span>Track / Artist</span><span>Genre</span><span>Hit</span>
+                <span>#</span><span>{{ ui.track_artist }}</span><span>{{ ui.genre }}</span><span>{{ ui.hit }}</span>
             </div>
             {% for album in top_albums %}
                 <div class="album-row">
@@ -90,13 +90,13 @@
                     <span>{% cycle '212' '195' '169' '153' '103' %}</span>
                 </div>
             {% empty %}
-                <div class="album-row"><span>--</span><span>No tracks</span><span>--</span><span>--</span></div>
+                <div class="album-row"><span>--</span><span>{{ ui.no_tracks }}</span><span>--</span><span>--</span></div>
             {% endfor %}
         </div>
     </div>
 
     <div class="panel">
-        <h2 class="section-title">Latest <span>Videos</span></h2>
+        <h2 class="section-title">{{ ui.latest_videos }} <span>{{ ui.videos }}</span></h2>
         <div class="video-grid">
             {% for video in videos %}
                 <article class="video-card {{ video.skin }}">
@@ -109,7 +109,7 @@
 </section>
 
 <section class="section-block reveal">
-    <h2 class="section-title">Latest <span>Posts</span></h2>
+    <h2 class="section-title">{{ ui.latest_posts }} <span>{{ ui.posts }}</span></h2>
     <div class="post-grid">
         {% for post in posts %}
             <article class="post-card {{ post.skin }}">

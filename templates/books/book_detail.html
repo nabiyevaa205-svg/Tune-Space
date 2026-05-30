@@ -12,30 +12,30 @@
         {% endif %}
     </div>
     <div>
-        <p class="eyebrow">Now Playing</p>
+        <p class="eyebrow">{{ ui.now_playing }}</p>
         <h1>{{ book.title }}</h1>
-        <p class="detail-artist"><strong>Artist:</strong> {{ book.author }}</p>
+        <p class="detail-artist"><strong>{{ ui.artist }}:</strong> {{ book.author }}</p>
         <p class="detail-description">{{ book.description }}</p>
 
         <div class="player-panel">
             {% if book.audio_file %}
                 <audio id="audio-player" preload="metadata">
                     <source src="{{ book.audio_file.url }}">
-                    Your browser does not support audio playback.
+                    {{ ui.browser_no_audio }}
                 </audio>
                 <div class="wave" id="audio-wave"></div>
                 <div class="controls">
-                    <button type="button" class="btn control-btn" data-action="back">-10s</button>
-                    <button type="button" class="btn control-btn" data-action="toggle">Play</button>
-                    <button type="button" class="btn control-btn" data-action="forward">+10s</button>
+                    <button type="button" class="btn control-btn" data-action="back">{{ ui.back_10 }}</button>
+                    <button type="button" class="btn control-btn" data-action="toggle" data-play-label="{{ ui.play }}" data-pause-label="{{ ui.pause }}">{{ ui.play }}</button>
+                    <button type="button" class="btn control-btn" data-action="forward">{{ ui.forward_10 }}</button>
                 </div>
                 <p id="audio-time" class="audio-time">00:00 / 00:00</p>
             {% else %}
-                <p class="audio-time">No audio uploaded for this track yet.</p>
+                <p class="audio-time">{{ ui.no_audio_uploaded }}</p>
             {% endif %}
         </div>
 
-        <a class="btn btn-secondary" href="{% url 'home' %}">Back to tracks</a>
+        <a class="btn btn-secondary" href="{% url 'home' %}">{{ ui.back_to_tracks }}</a>
     </div>
 </article>
 {% endblock %}

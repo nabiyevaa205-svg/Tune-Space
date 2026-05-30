@@ -1,7 +1,6 @@
 {% load static %}
-{% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ active_language }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,26 +16,26 @@
         <div class="container nav-wrap">
             <a class="brand" href="{% url 'home' %}">TuneSpace</a>
             <nav class="main-nav" aria-label="Main navigation">
-                <a href="{% url 'home' %}">{% trans "Tracks" %}</a>
-                <a href="{% url 'about' %}">{% trans "About" %}</a>
+                <a href="{% url 'home' %}">{{ ui.tracks }}</a>
+                <a href="{% url 'about' %}">{{ ui.about }}</a>
 
                 {% if user.is_authenticated %}
-                    <span class="user-name">{% trans "Hi" %}, {{ user.username }}!</span>
+                    <span class="user-name">{{ ui.hi }}, {{ user.username }}!</span>
                     <form action="{% url 'logout' %}" method="post" class="logout-form">
                         {% csrf_token %}
-                        <button type="submit" class="logout-btn">{% trans "Log out" %}</button>
+                        <button type="submit" class="logout-btn">{{ ui.logout }}</button>
                     </form>
                 {% else %}
-                    <a href="{% url 'login' %}">{% trans "Log in" %}</a>
-                    <a class="nav-pill" href="{% url 'register' %}">{% trans "Sign up" %}</a>
+                    <a href="{% url 'login' %}">{{ ui.login }}</a>
+                    <a class="nav-pill" href="{% url 'register' %}">{{ ui.signup }}</a>
                 {% endif %}
 
                 <form class="lang-switcher" action="{% url 'set_language' %}" method="post">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="{{ request.path }}">
-                    <button type="submit" name="language" value="kk">ҚАЗ</button>
-                    <button type="submit" name="language" value="ru">РУС</button>
-                    <button type="submit" name="language" value="en">ENG</button>
+                    <button class="{% if active_language == 'kk' %}active{% endif %}" type="submit" name="language" value="kk">ҚАЗ</button>
+                    <button class="{% if active_language == 'ru' %}active{% endif %}" type="submit" name="language" value="ru">РУС</button>
+                    <button class="{% if active_language == 'en' %}active{% endif %}" type="submit" name="language" value="en">ENG</button>
                 </form>
             </nav>
         </div>
@@ -49,7 +48,7 @@
 
     {% block footer %}
     <footer class="site-footer">
-        <div class="container">2026 TuneSpace | {% trans "Pick the right vibe for your day" %}</div>
+        <div class="container">2026 TuneSpace | {{ ui.footer }}</div>
     </footer>
     {% endblock %}
 

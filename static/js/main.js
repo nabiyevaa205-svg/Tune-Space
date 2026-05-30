@@ -45,13 +45,15 @@
     player.addEventListener("timeupdate", updateTime);
 
     toggleBtn?.addEventListener("click", async () => {
+      const playLabel = toggleBtn.dataset.playLabel || "Play";
+      const pauseLabel = toggleBtn.dataset.pauseLabel || "Pause";
       if (player.paused) {
         await player.play();
-        toggleBtn.textContent = "Pause";
+        toggleBtn.textContent = pauseLabel;
         wave?.classList.add("is-playing");
       } else {
         player.pause();
-        toggleBtn.textContent = "Play";
+        toggleBtn.textContent = playLabel;
         wave?.classList.remove("is-playing");
       }
     });
@@ -65,7 +67,7 @@
     });
 
     player.addEventListener("ended", () => {
-      if (toggleBtn) toggleBtn.textContent = "Play";
+      if (toggleBtn) toggleBtn.textContent = toggleBtn.dataset.playLabel || "Play";
       wave?.classList.remove("is-playing");
     });
   }

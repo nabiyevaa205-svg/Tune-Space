@@ -9,10 +9,10 @@
 
 {% block content %}
 <section class="demo-card reveal">
-    <p class="eyebrow">Template Demo</p>
-    <h1>Welcome, {{ name|upper }}!</h1>
+    <p class="eyebrow">{{ ui.demo }}</p>
+    <h1>{{ ui.welcome }}, {{ name|upper }}!</h1>
 
-    <h2>Skills list</h2>
+    <h2>{{ ui.skills_list }}</h2>
     <ul>
         {% for item in items %}
         <li>{{ forloop.counter }}. {{ item }}</li>
@@ -20,11 +20,11 @@
     </ul>
 
     {% if status == 'admin' %}
-    <p>You have administrator access.</p>
+    <p>{{ ui.admin_access }}</p>
     {% elif status == 'student' %}
-    <p>You are viewing the student version of this page.</p>
+    <p>{{ ui.student_version }}</p>
     {% else %}
-    <p>Welcome, guest user.</p>
+    <p>{{ ui.guest_welcome }}</p>
     {% endif %}
 </section>
 {% endblock %}
