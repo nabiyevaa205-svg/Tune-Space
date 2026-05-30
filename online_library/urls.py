@@ -7,6 +7,7 @@ handler404 = "online_library.views.custom_404"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("i18n/", include("django.conf.urls.i18n")),
     path("", include("books.urls")),
     path("users/", include("users.urls")),
     path("blog/", include("blog.urls")),

@@ -4,14 +4,18 @@
 
 {% block content %}
 <article class="detail-card reveal">
-    {% if book.cover %}
-        <img class="detail-cover" src="{{ book.cover.url }}" alt="{{ book.title }}">
-    {% endif %}
+    <div class="detail-media">
+        {% if book.cover %}
+            <img class="detail-cover" src="{{ book.cover.url }}" alt="{{ book.title }}">
+        {% else %}
+            <div class="detail-cover cover-placeholder" aria-hidden="true"></div>
+        {% endif %}
+    </div>
     <div>
         <p class="eyebrow">Now Playing</p>
         <h1>{{ book.title }}</h1>
-        <p><strong>Artist:</strong> {{ book.author }}</p>
-        <p>{{ book.description }}</p>
+        <p class="detail-artist"><strong>Artist:</strong> {{ book.author }}</p>
+        <p class="detail-description">{{ book.description }}</p>
 
         <div class="player-panel">
             {% if book.audio_file %}
@@ -31,7 +35,7 @@
             {% endif %}
         </div>
 
-        <a class="btn" href="{% url 'home' %}">Back to tracks</a>
+        <a class="btn btn-secondary" href="{% url 'home' %}">Back to tracks</a>
     </div>
 </article>
 {% endblock %}

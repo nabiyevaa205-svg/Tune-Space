@@ -4,7 +4,7 @@
 
 {% block content %}
 <section class="hero hero-wide reveal">
-    <div>
+    <div class="hero-copy">
         <p class="eyebrow">Trending Track</p>
         {% if featured %}
             <h1>{{ featured.title }}</h1>
@@ -15,6 +15,13 @@
             <h1>Golden Evening Session</h1>
             <p class="hero-meta">TuneSpace Curated Collection</p>
             <p class="hero-text">Add tracks from admin panel and this section will auto-update.</p>
+        {% endif %}
+    </div>
+    <div class="hero-art" aria-hidden="true">
+        {% if featured and featured.cover %}
+            <img src="{{ featured.cover.url }}" alt="">
+        {% else %}
+            <span></span>
         {% endif %}
     </div>
 </section>
@@ -45,7 +52,14 @@
                     {% endif %}
                     <h4>{{ book.title }}</h4>
                     <p>{{ book.author }}</p>
-                    {% if book.audio_file %}<span class="play-badge">Playable</span>{% else %}<span class="play-badge muted">No audio</span>{% endif %}<a class="mini-link" href="{% url 'book_detail' book.pk %}">Open</a>
+                    <div class="song-actions">
+                        {% if book.audio_file %}
+                            <span class="play-badge">Playable</span>
+                        {% else %}
+                            <span class="play-badge muted">No audio</span>
+                        {% endif %}
+                        <a class="mini-link" href="{% url 'book_detail' book.pk %}">Open</a>
+                    </div>
                 </article>
             {% endfor %}
         {% else %}

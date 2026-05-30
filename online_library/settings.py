@@ -21,6 +21,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -84,5 +85,14 @@ LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# settings.py
+LANGUAGE_CODE = 'kk' # Бастапқы тіл
+LANGUAGES = [
+    ('kk', 'Қазақша'),
+    ('ru', 'Русский'),
+    ('en', 'English'),
+]
 
+USE_I18N = True
+LOCALE_PATHS = [BASE_DIR / 'locale'] # Аударма файлдары сақталатын жер
 

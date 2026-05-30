@@ -1,6 +1,7 @@
-﻿{% load static %}
+{% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,144 +11,48 @@
 </head>
 <body>
     <div class="noise-bg" aria-hidden="true"></div>
-    
+
+    {% block header %}
     <header class="site-header">
-        <div class="container">
-            <div class="navbar">
-                <!-- Logo -->
-                <a class="logo" href="{% url 'home' %}">
-                    <span class="logo-text">TuneSpace</span>
-                </a>
+        <div class="container nav-wrap">
+            <a class="brand" href="{% url 'home' %}">TuneSpace</a>
+            <nav class="main-nav" aria-label="Main navigation">
+                <a href="{% url 'home' %}">{% trans "Tracks" %}</a>
+                <a href="{% url 'about' %}">{% trans "About" %}</a>
 
-                <!-- Navigation -->
-                <div class="nav-links">
-                    <a href="{% url 'home' %}" class="nav-link">Басты бет</a>
-                    <a href="{% url 'home' %}" class="nav-link">Тректер</a>
-                    <a href="{% url 'home' %}" class="nav-link">Плейлисттер</a>
-                    <a href="{% url 'home' %}" class="nav-link">Біз туралы</a>
-                </div>
-
-                <!-- Right side -->
-                <div class="nav-right">
-                    <!-- Language Switcher -->
-                    <div class="lang-switcher">
-                        <button class="lang-btn" onclick="setLang('kz')">ҚАЗ</button>
-                        <button class="lang-btn" onclick="setLang('ru')">РУС</button>
-                        <button class="lang-btn" onclick="setLang('en')">ENG</button>
-                    </div>
-
-                    <!-- User Menu -->
-                    {% if user.is_authenticated %}
-                    <div class="user-menu">
-                        <button class="user-btn" onclick="toggleDropdown()">
-                            <div class="user-avatar">{{ user.username|first|upper }}</div>
-                            <span class="user-name">{{ user.username }}</span>
-                        </button>
-                        <div class="user-dropdown" id="userDropdown">
-                            <div class="dropdown-header">
-                                <div class="dropdown-avatar">{{ user.username|first|upper }}</div>
-                                <div class="dropdown-info">
-                                    <div class="dropdown-name">{{ user.username }}</div>
-                                    <div class="dropdown-email">{{ user.email|default:"email@example.com" }}</div>
-                                </div>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">👤 Профиль</a>
-                            <a href="#" class="dropdown-item">❤️ Сүйіктілер</a>
-                            <a href="#" class="dropdown-item">📁 Менің плейлисттерім</a>
-                            <div class="dropdown-divider"></div>
-                            <form action="{% url 'logout' %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="dropdown-item logout-item">🚪 Шығу</button>
-                            </form>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="auth-buttons">
-                        <a href="{% url 'login' %}" class="btn-login">Кіру</a>
-                        <a href="{% url 'register' %}" class="btn-signup">Тіркелу</a>
-                    </div>
-                    {% endif %}
-
-                    <!-- Mobile menu button -->
-                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile Menu -->
-            <div class="mobile-nav" id="mobileNav">
-                <a href="{% url 'home' %}" class="mobile-nav-link">🏠 Басты бет</a>
-                <a href="{% url 'home' %}" class="mobile-nav-link">🎵 Тректер</a>
-                <a href="{% url 'home' %}" class="mobile-nav-link">📋 Плейлисттер</a>
-                <a href="{% url 'home' %}" class="mobile-nav-link">ℹ️ Біз туралы</a>
-                {% if not user.is_authenticated %}
-                    <div class="mobile-auth">
-                        <a href="{% url 'login' %}" class="mobile-login">Кіру</a>
-                        <a href="{% url 'register' %}" class="mobile-signup">Тіркелу</a>
-                    </div>
+                {% if user.is_authenticated %}
+                    <span class="user-name">{% trans "Hi" %}, {{ user.username }}!</span>
+                    <form action="{% url 'logout' %}" method="post" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">{% trans "Log out" %}</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">{% trans "Log in" %}</a>
+                    <a class="nav-pill" href="{% url 'register' %}">{% trans "Sign up" %}</a>
                 {% endif %}
-            </div>
+
+                <form class="lang-switcher" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    <button type="submit" name="language" value="kk">ҚАЗ</button>
+                    <button type="submit" name="language" value="ru">РУС</button>
+                    <button type="submit" name="language" value="en">ENG</button>
+                </form>
+            </nav>
         </div>
     </header>
+    {% endblock %}
 
     <main class="container content">
         {% block content %}{% endblock %}
     </main>
 
+    {% block footer %}
     <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-text">© 2026 TuneSpace | Pick the right vibe for your day</div>
-            </div>
-        </div>
+        <div class="container">2026 TuneSpace | {% trans "Pick the right vibe for your day" %}</div>
     </footer>
+    {% endblock %}
 
-    <script>
-        // User dropdown
-        function toggleDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('show');
-            }
-        }
-
-        // Mobile menu
-        function toggleMobileMenu() {
-            const mobileNav = document.getElementById('mobileNav');
-            const menuBtn = document.querySelector('.mobile-menu-btn');
-            if (mobileNav) {
-                mobileNav.classList.toggle('show');
-                menuBtn.classList.toggle('active');
-                if (mobileNav.classList.contains('show')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
-            }
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('userDropdown');
-            const userBtn = document.querySelector('.user-btn');
-            if (dropdown && userBtn) {
-                if (!userBtn.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('show');
-                }
-            }
-        });
-
-        // Language switcher
-        window.setLang = function(lang) {
-            alert('Тіл өзгертілді: ' + lang);
-            console.log('Language changed to:', lang);
-        };
-    </script>
-    
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

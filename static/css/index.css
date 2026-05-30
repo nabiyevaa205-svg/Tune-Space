@@ -1,3 +1,30 @@
-body {
-    background-color: #e9f5ff;
+.demo-card {
+    max-width: 760px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    padding: clamp(18px, 4vw, 30px);
+}
+
+.demo-card h1 {
+    margin: 8px 0 16px;
+    font-size: clamp(2.1rem, 6vw, 4rem);
+    line-height: 1;
+}
+
+.demo-card ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+}
+
+.demo-card li {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 12px;
+    font-weight: 700;
 }
