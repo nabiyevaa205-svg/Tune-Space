@@ -14,7 +14,8 @@
     {% block header %}
     <header class="site-header">
         <div class="container nav-wrap">
-            <a class="brand" href="{% url 'home' %}">TuneSpace</a>
+            <a class="menu-mark" href="{% url 'home' %}" aria-label="{{ ui.tracks }}"><span></span><span></span><span></span></a>
+            <a class="brand" href="{% url 'home' %}"><strong>TUNE</strong><span>SPACE</span></a>
             <nav class="main-nav" aria-label="Main navigation">
                 <a href="{% url 'home' %}">{{ ui.tracks }}</a>
                 <a href="{% url 'about' %}">{{ ui.about }}</a>
@@ -48,7 +49,38 @@
 
     {% block footer %}
     <footer class="site-footer">
-        <div class="container">2026 TuneSpace | {{ ui.footer }}</div>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a class="brand" href="{% url 'home' %}"><strong>TUNE</strong><span>SPACE</span></a>
+                <p>{{ ui.footer_text }}</p>
+                <div class="social-row" aria-label="Social links">
+                    <a href="#">f</a>
+                    <a href="#">x</a>
+                    <a href="#">in</a>
+                    <a href="#">@</a>
+                </div>
+            </div>
+            <div>
+                <h3>{{ ui.useful_link }}</h3>
+                <a href="{% url 'home' %}">{{ ui.tracks }}</a>
+                <a href="{% url 'about' %}">{{ ui.about }}</a>
+                <a href="{% url 'login' %}">{{ ui.login }}</a>
+            </div>
+            <div>
+                <h3>{{ ui.genres }}</h3>
+                <span>Pop</span>
+                <span>Rock</span>
+                <span>Jazz</span>
+                <span>Ballad</span>
+            </div>
+            <div>
+                <h3>{{ ui.contact_us }}</h3>
+                <p><strong>{{ ui.address }}:</strong> Almaty, Kazakhstan</p>
+                <p><strong>{{ ui.phone }}:</strong> +7 777 000 00 00</p>
+                <p><strong>{{ ui.email_label }}:</strong> hello@tunespace.kz</p>
+            </div>
+        </div>
+        <div class="container footer-bottom">2026 TuneSpace | {{ ui.copyright }}</div>
     </footer>
     {% endblock %}
 

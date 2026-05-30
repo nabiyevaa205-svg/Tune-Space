@@ -3,7 +3,7 @@
 {% block title %}TuneSpace | Music Platform{% endblock %}
 
 {% block content %}
-<section class="hero hero-wide reveal">
+<section class="hero hero-wide reveal" style="--hero-image: url('{{ hero_image }}');">
     <div class="hero-copy">
         <p class="eyebrow">{{ ui.trending_track }}</p>
         {% if featured %}
@@ -17,23 +17,18 @@
             <p class="hero-text">{{ ui.fallback_text }}</p>
         {% endif %}
     </div>
-    <div class="hero-art" aria-hidden="true">
-        {% if featured and featured.cover %}
-            <img src="{{ featured.cover.url }}" alt="">
-        {% else %}
-            <span></span>
-        {% endif %}
-    </div>
 </section>
 
 <section class="section-block reveal">
     <h2 class="section-title">{{ ui.latest_events }} <span>{{ ui.events }}</span></h2>
     <div class="event-grid">
         {% for event in events %}
-            <article class="event-card {{ event.skin }}">
+            <article class="event-card image-card {{ event.skin }}" {% if event.image %}style="--card-image: url('/media/{{ event.image }}');"{% endif %}>
                 <div class="event-date">{{ event.date }}</div>
-                <h3>{{ event.title }}</h3>
-                <p>{{ event.place }}</p>
+                <div class="card-copy">
+                    <h3>{{ event.title }}</h3>
+                    <p>{{ event.place }}</p>
+                </div>
             </article>
         {% endfor %}
     </div>
@@ -99,9 +94,11 @@
         <h2 class="section-title">{{ ui.latest_videos }} <span>{{ ui.videos }}</span></h2>
         <div class="video-grid">
             {% for video in videos %}
-                <article class="video-card {{ video.skin }}">
-                    <h4>{{ video.title }}</h4>
-                    <p>{{ video.artist }}</p>
+                <article class="video-card image-card {{ video.skin }}" {% if video.image %}style="--card-image: url('/media/{{ video.image }}');"{% endif %}>
+                    <div class="card-copy">
+                        <h4>{{ video.title }}</h4>
+                        <p>{{ video.artist }}</p>
+                    </div>
                 </article>
             {% endfor %}
         </div>
@@ -112,9 +109,11 @@
     <h2 class="section-title">{{ ui.latest_posts }} <span>{{ ui.posts }}</span></h2>
     <div class="post-grid">
         {% for post in posts %}
-            <article class="post-card {{ post.skin }}">
-                <p>{{ post.date }}</p>
-                <h4>{{ post.title }}</h4>
+            <article class="post-card image-card {{ post.skin }}" {% if post.image %}style="--card-image: url('/media/{{ post.image }}');"{% endif %}>
+                <div class="card-copy">
+                    <p>{{ post.date }}</p>
+                    <h4>{{ post.title }}</h4>
+                </div>
             </article>
         {% endfor %}
     </div>
