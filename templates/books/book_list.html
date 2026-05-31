@@ -19,6 +19,24 @@
     </div>
 </section>
 
+<section class="section-block artist-section reveal">
+    <div class="section-heading">
+        <h2 class="section-title">{{ ui.popular_artists }}</h2>
+        <a href="#artist-carousel">{{ ui.show_all }}</a>
+    </div>
+    <div class="artist-carousel" id="artist-carousel" aria-label="{{ ui.popular_artists }}">
+        {% for item in artists %}
+            <a class="artist-card" href="{% url 'artist_profile' item.slug %}">
+                <span class="artist-photo">
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                </span>
+                <strong>{{ item.name }}</strong>
+                <span>{{ ui.artist }}</span>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
 <section class="section-block reveal">
     <h2 class="section-title">{{ ui.latest_events }} <span>{{ ui.events }}</span></h2>
     <div class="event-grid">

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ artist.name }} | TuneSpace{% endblock %}
+
+{% block content %}
+<section class="artist-profile reveal">
+    <div class="artist-banner" style="--artist-image: url('{{ artist_image }}');">
+        <div>
+            <p class="eyebrow">{{ ui.artist }}</p>
+            <h1>{{ artist.name }}</h1>
+            <p>{{ artist_bio }}</p>
+        </div>
+    </div>
+
+    <div class="artist-body">
+        <div class="artist-controls">
+            <button class="artist-play" type="button" aria-label="{{ ui.play }}"></button>
+            <button class="follow-btn" type="button">{{ ui.follow }}</button>
+            <button class="more-btn" type="button" aria-label="{{ ui.more }}">...</button>
+        </div>
+
+        <section class="popular-list">
+            <h2>{{ ui.popular }}</h2>
+            {% for track in popular_tracks %}
+                <article class="popular-track">
+                    <span class="track-number">{{ forloop.counter }}</span>
+                    <img src="{{ track.image }}" alt="{{ track.title }}">
+                    <strong>{{ track.title }}</strong>
+                    <span class="track-plays">{{ track.plays }}</span>
+                    <span class="track-duration">{{ track.duration }}</span>
+                </article>
+            {% empty %}
+                {% for book in artist_books %}
+                    <article class="popular-track">
+                        <span class="track-number">{{ forloop.counter }}</span>
+                        {% if book.cover %}
+                            <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                        {% else %}
+                            <span class="track-cover-placeholder"></span>
+                        {% endif %}
+                        <strong>{{ book.title }}</strong>
+                        <span class="track-plays">--</span>
+                        <span class="track-duration">--</span>
+                    </article>
+                {% empty %}
+                    <p class="empty-copy">{{ ui.no_artist_tracks }}</p>
+                {% endfor %}
+            {% endfor %}
+            <a class="see-more" href="{% url 'home' %}">{{ ui.see_more }}</a>
+        </section>
+    </div>
+</section>
+{% endblock %}
