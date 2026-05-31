@@ -3,51 +3,68 @@
 {% block title %}{{ artist.name }} | TuneSpace{% endblock %}
 
 {% block content %}
-<section class="artist-profile reveal">
-    <div class="artist-banner" style="--artist-image: url('{{ artist_image }}');">
-        <div>
-            <p class="eyebrow">{{ ui.artist }}</p>
-            <h1>{{ artist.name }}</h1>
-            <p>{{ artist_bio }}</p>
+<section class="artist-page reveal" style="--artist-image: url('{{ artist_image }}');">
+    <div class="artist-page-top">
+        <label class="artist-search">
+            <span>Search</span>
+            <input type="search" aria-label="Search" placeholder="Search">
+        </label>
+        <div class="artist-logo-mark">{{ artist.name|slice:":2" }}</div>
+        <div class="artist-mini-actions">
+            <span></span>
+            <span></span>
         </div>
     </div>
 
-    <div class="artist-body">
-        <div class="artist-controls">
-            <button class="artist-play" type="button" aria-label="{{ ui.play }}"></button>
-            <button class="follow-btn" type="button">{{ ui.follow }}</button>
-            <button class="more-btn" type="button" aria-label="{{ ui.more }}">...</button>
-        </div>
+    <div class="artist-page-grid">
+        <div class="artist-main-copy">
+            <p class="eyebrow">{{ ui.artist }}</p>
+            <h1>{{ artist.name }}</h1>
+            <p>{{ artist_bio }}</p>
 
-        <section class="popular-list">
-            <h2>{{ ui.popular }}</h2>
-            {% for track in popular_tracks %}
-                <article class="popular-track">
-                    <span class="track-number">{{ forloop.counter }}</span>
-                    <img src="{{ track.image }}" alt="{{ track.title }}">
+            <div class="artist-action-row">
+                <button class="listen-btn" type="button">{{ ui.listen }}</button>
+                <button class="artist-icon-btn" type="button" aria-label="{{ ui.follow }}">+</button>
+            </div>
+
+            <nav class="artist-tabs" aria-label="Artist tabs">
+                <a href="#overview">{{ ui.overview }}</a>
+                <a href="#related">{{ ui.related_artists }}</a>
+                <a href="#about">{{ ui.about }}</a>
+            </nav>
+
+            <div class="artist-song-list" id="overview">
+                {% for track in popular_tracks %}
+                <article class="artist-song-item">
+                    <span>{{ forloop.counter|stringformat:"02d" }}</span>
+                    <span class="mini-cover {{ track.cover_skin }}">
+                        <img src="{{ track.image }}" alt="{{ track.title }}">
+                        <i>{{ track.logo }}</i>
+                    </span>
                     <strong>{{ track.title }}</strong>
-                    <span class="track-plays">{{ track.plays }}</span>
-                    <span class="track-duration">{{ track.duration }}</span>
-                </article>
-            {% empty %}
-                {% for book in artist_books %}
-                    <article class="popular-track">
-                        <span class="track-number">{{ forloop.counter }}</span>
-                        {% if book.cover %}
-                            <img src="{{ book.cover.url }}" alt="{{ book.title }}">
-                        {% else %}
-                            <span class="track-cover-placeholder"></span>
-                        {% endif %}
-                        <strong>{{ book.title }}</strong>
-                        <span class="track-plays">--</span>
-                        <span class="track-duration">--</span>
+                    <em>{{ track.plays }}</em>
+                    <b>...</b>
                     </article>
-                {% empty %}
-                    <p class="empty-copy">{{ ui.no_artist_tracks }}</p>
                 {% endfor %}
-            {% endfor %}
-            <a class="see-more" href="{% url 'home' %}">{{ ui.see_more }}</a>
-        </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-block artist-release-section reveal">
+    <h2 class="section-title">{{ ui.album_releases }}</h2>
+    <div class="release-grid">
+        {% for track in popular_tracks %}
+            <a class="release-card" href="#">
+                <span class="release-cover {{ track.cover_skin }}">
+                    <img src="{{ track.image }}" alt="{{ track.title }}">
+                    <i>{{ track.logo }}</i>
+                    <small>{{ artist.name }}</small>
+                </span>
+                <strong>{{ track.title }}</strong>
+                <span>{{ artist.name }}</span>
+            </a>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

@@ -159,10 +159,24 @@ ARTICLES = [
 
 
 def _artist_tracks(slug, image):
-    return [
-        {"title": title, "plays": plays, "duration": duration, "image": image}
-        for title, plays, duration in ARTIST_TRACKS.get(slug, [])
+    covers = [
+        "cover-a",
+        "cover-b",
+        "cover-c",
+        "cover-d",
+        "cover-e",
     ]
+    tracks = []
+    for index, (title, plays, duration) in enumerate(ARTIST_TRACKS.get(slug, [])):
+        tracks.append({
+            "title": title,
+            "plays": plays,
+            "duration": duration,
+            "image": image,
+            "cover_skin": covers[index % len(covers)],
+            "logo": "".join(word[0] for word in title.split()[:3]).upper(),
+        })
+    return tracks
 
 
 def _artist_image(index):
