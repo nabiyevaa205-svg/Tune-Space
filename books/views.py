@@ -127,6 +127,36 @@ ARTIST_TRACKS = {
     ],
 }
 
+ARTICLES = [
+    {
+        "slug": "summer-music-trends",
+        "title_key": "article_1_title",
+        "summary_key": "article_1_summary",
+        "body_key": "article_1_body",
+        "date": "31 Aug 2026",
+        "image": "books/photo_i_will_always_love_you.jpg",
+        "skin": "skin-a",
+    },
+    {
+        "slug": "best-live-shows",
+        "title_key": "article_2_title",
+        "summary_key": "article_2_summary",
+        "body_key": "article_2_body",
+        "date": "03 Oct 2026",
+        "image": "books/photo_i_want_to_know_what_love_is.jpg",
+        "skin": "skin-b",
+    },
+    {
+        "slug": "playlist-for-evening",
+        "title_key": "article_3_title",
+        "summary_key": "article_3_summary",
+        "body_key": "article_3_body",
+        "date": "31 Oct 2026",
+        "image": "books/photo_hotel_california.jpg",
+        "skin": "skin-c",
+    },
+]
+
 
 def _artist_tracks(slug, image):
     return [
@@ -154,10 +184,16 @@ def _popular_artists(books):
 def _page_sections():
     ui = get_ui_text(get_language())
     return {
-        "events": [
-            {"title": ui["event_1_title"], "date": "31 Aug", "place": "Almaty Arena", "skin": "skin-a", "image": "books/photo_i_will_always_love_you.jpg"},
-            {"title": ui["event_2_title"], "date": "03 Oct", "place": "Shymkent Hall", "skin": "skin-b", "image": "books/photo_i_want_to_know_what_love_is.jpg"},
-            {"title": ui["event_3_title"], "date": "31 Oct", "place": "Astana Live", "skin": "skin-c", "image": "books/photo_hotel_california.jpg"},
+        "articles": [
+            {
+                "slug": article["slug"],
+                "title": ui[article["title_key"]],
+                "summary": ui[article["summary_key"]],
+                "date": article["date"],
+                "skin": article["skin"],
+                "image": article["image"],
+            }
+            for article in ARTICLES
         ],
         "videos": [
             {"title": "I Miss You", "artist": "Clean Bandit", "skin": "skin-d", "image": "books/photo_i_miss_you.jpg"},
@@ -228,6 +264,23 @@ def artist_profile(request, slug):
         "popular_tracks": _artist_tracks(slug, artist["image"]),
     }
     return render(request, "books/artist_detail.html", context)
+
+
+def article_detail(request, slug):
+    ui = get_ui_text(get_language())
+    article = next((item for item in ARTICLES if item["slug"] == slug), None)
+    if article is None:
+        return HttpResponseRedirect(reverse("home"))
+    context = {
+        "article": {
+            "title": ui[article["title_key"]],
+            "summary": ui[article["summary_key"]],
+            "body": ui[article["body_key"]],
+            "date": article["date"],
+            "image": f"/media/{article['image']}",
+        }
+    }
+    return render(request, "books/article_detail.html", context)
 
 
 def about(request):

@@ -1101,6 +1101,18 @@ body {
     box-shadow: var(--shadow);
 }
 
+.article-card {
+    color: inherit;
+    display: block;
+    text-decoration: none;
+    transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.article-card:hover {
+    filter: brightness(1.08);
+    transform: translateY(-3px);
+}
+
 .image-card::after {
     content: "";
     position: absolute;
@@ -1439,6 +1451,58 @@ body {
     color: #b8b8b8;
 }
 
+.article-detail {
+    margin-top: 86px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.045);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.article-hero {
+    min-height: 380px;
+    display: flex;
+    align-items: end;
+    padding: clamp(28px, 6vw, 54px);
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(17, 17, 17, 0.84)),
+        var(--article-image) center / cover no-repeat;
+}
+
+.article-hero h1 {
+    max-width: 880px;
+    margin: 10px 0;
+    color: #ffffff;
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    line-height: 0.98;
+    font-weight: 900;
+}
+
+.article-hero p {
+    max-width: 760px;
+    margin: 0 0 12px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.05rem;
+    line-height: 1.65;
+}
+
+.article-hero span {
+    color: #b8b8b8;
+    font-weight: 800;
+}
+
+.article-body {
+    max-width: 840px;
+    padding: clamp(26px, 5vw, 54px);
+}
+
+.article-body p {
+    margin: 0 0 28px;
+    color: #d7d1df;
+    font-size: 1.08rem;
+    line-height: 1.85;
+}
+
 .site-footer {
     margin-top: 40px;
     border-top: 1px solid rgba(255, 255, 255, 0.055);
@@ -1593,6 +1657,10 @@ body {
     }
 
     .artist-profile {
+        margin-top: 18px;
+    }
+
+    .article-detail {
         margin-top: 18px;
     }
 

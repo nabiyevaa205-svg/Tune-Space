@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} | TuneSpace{% endblock %}
+
+{% block content %}
+<article class="article-detail reveal">
+    <header class="article-hero" style="--article-image: url('{{ article.image }}');">
+        <div>
+            <p class="eyebrow">{{ ui.article }}</p>
+            <h1>{{ article.title }}</h1>
+            <p>{{ article.summary }}</p>
+            <span>{{ article.date }}</span>
+        </div>
+    </header>
+
+    <div class="article-body">
+        <p>{{ article.body }}</p>
+        <a class="btn btn-secondary" href="{% url 'home' %}">{{ ui.back_to_tracks }}</a>
+    </div>
+</article>
+{% endblock %}

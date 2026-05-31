@@ -38,16 +38,16 @@
 </section>
 
 <section class="section-block reveal">
-    <h2 class="section-title">{{ ui.latest_events }} <span>{{ ui.events }}</span></h2>
+    <h2 class="section-title">{{ ui.latest_articles }} <span>{{ ui.articles }}</span></h2>
     <div class="event-grid">
-        {% for event in events %}
-            <article class="event-card image-card {{ event.skin }}" {% if event.image %}style="--card-image: url('/media/{{ event.image }}');"{% endif %}>
-                <div class="event-date">{{ event.date }}</div>
+        {% for article in articles %}
+            <a class="event-card article-card image-card {{ article.skin }}" href="{% url 'article_detail' article.slug %}" {% if article.image %}style="--card-image: url('/media/{{ article.image }}');"{% endif %}>
+                <div class="event-date">{{ article.date }}</div>
                 <div class="card-copy">
-                    <h3>{{ event.title }}</h3>
-                    <p>{{ event.place }}</p>
+                    <h3>{{ article.title }}</h3>
+                    <p>{{ article.summary }}</p>
                 </div>
-            </article>
+            </a>
         {% endfor %}
     </div>
 </section>
