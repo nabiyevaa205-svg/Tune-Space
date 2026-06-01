@@ -3,19 +3,25 @@
 {% block title %}TuneSpace | Music Platform{% endblock %}
 
 {% block content %}
-<section class="hero hero-wide reveal" style="--hero-image: url('{{ hero_image }}');">
+<section class="hero hero-wide home-hero reveal" style="--hero-image: url('{{ hero_image }}');">
     <div class="hero-copy">
         <p class="eyebrow">{{ ui.trending_track }}</p>
+        <h1>{{ ui.hero_playlist_title }}</h1>
         {% if featured %}
-            <h1>{{ featured.title }}</h1>
-            <p class="hero-meta">{{ featured.author }} | TuneSpace 2026</p>
-            <p class="hero-text">{{ featured.description|truncatechars:130 }}</p>
-            <a class="btn" href="{% url 'book_detail' featured.pk %}">{{ ui.open_player }}</a>
+            <p class="hero-meta">{{ hero_artist.name }} / {{ featured.title }} / TuneSpace 2026</p>
+            <p class="hero-text">{{ ui.hero_playlist_text }}</p>
         {% else %}
-            <h1>{{ ui.fallback_title }}</h1>
-            <p class="hero-meta">{{ ui.fallback_meta }}</p>
-            <p class="hero-text">{{ ui.fallback_text }}</p>
+            <p class="hero-meta">{{ hero_artist.name }} / TuneSpace 2026</p>
+            <p class="hero-text">{{ ui.hero_playlist_text }}</p>
         {% endif %}
+        <div class="home-hero-actions">
+            {% if featured %}
+                <a class="hero-action primary" href="{% url 'book_detail' featured.pk %}"><span></span>{{ ui.play_all }}</a>
+            {% else %}
+                <a class="hero-action primary" href="#track-grid"><span></span>{{ ui.play_all }}</a>
+            {% endif %}
+            <a class="hero-action secondary" href="#artist-carousel">{{ ui.popular_artists }}</a>
+        </div>
     </div>
 </section>
 
@@ -81,7 +87,7 @@
     </div>
 </section>
 
-<section class="split section-block reveal">
+<section class="split section-block reveal" id="top-charts">
     <div class="panel">
         <h2 class="section-title">{{ ui.top }} <span>{{ ui.albums }}</span></h2>
         <div class="album-table">

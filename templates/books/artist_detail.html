@@ -53,7 +53,7 @@
 <section class="artist-about-section reveal" id="about">
     <h2>{{ ui.about }}</h2>
     <article class="artist-about-card">
-        <img src="{{ artist_image }}" alt="{{ artist.name }}">
+        <img src="{{ artist_about_image|default:artist_image }}" alt="{{ artist.name }}">
         <div class="artist-rank">#3<br><span>{{ ui.popular }}</span></div>
         <div>
             <strong>114,883,250 {{ ui.monthly_listeners }}</strong>

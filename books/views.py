@@ -17,6 +17,17 @@ ARTIST_IMAGES = [
     "books/photo_stay_with_me.jpg",
 ]
 
+ARTIST_ABOUT_IMAGES = {
+    "bts": "https://commons.wikimedia.org/wiki/Special:FilePath/BTS_on_the_Billboard_Music_Awards_red_carpet%2C_1_May_2019.jpg",
+    "britney-spears": "https://commons.wikimedia.org/wiki/Special:FilePath/Britney_Spears_2013_%28Straighten_Crop%29.jpg",
+    "michael-jackson": "https://commons.wikimedia.org/wiki/Special:FilePath/Michael_Jackson_and_Quincy_Jones_at_the_1984_Grammy%27s.jpg",
+    "taylor-swift": "https://commons.wikimedia.org/wiki/Special:FilePath/Taylor_swift.jpg",
+    "the-weeknd": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Weeknd_Cannes_2023.png",
+    "billie-eilish": "https://commons.wikimedia.org/wiki/Special:FilePath/Billie_Eilish_Vogue_2023_%28cropped%29.jpg",
+    "lady-gaga": "https://commons.wikimedia.org/wiki/Special:FilePath/Lady_Gaga_at_Joe_Biden%27s_inauguration_%28cropped_5%29.jpg",
+    "drake": "https://commons.wikimedia.org/wiki/Special:FilePath/Drake_July_2016.jpg",
+}
+
 POPULAR_ARTISTS = [
     {
         "name": "BTS",
@@ -227,6 +238,10 @@ def _artist_image(index):
     return ARTIST_IMAGES[index % len(ARTIST_IMAGES)]
 
 
+def _artist_about_image(slug, fallback):
+    return ARTIST_ABOUT_IMAGES.get(slug, fallback)
+
+
 def _popular_artists(books):
     return [
         {
@@ -273,7 +288,8 @@ def _book_list_context(books, **extra):
         "top_albums": books[:5],
         "latest_songs": books[:4],
         "featured": books.first(),
-        "hero_image": "/media/books/photo_golden_dragon_internal_flight.jpg",
+        "hero_artist": POPULAR_ARTISTS[5],
+        "hero_image": "https://i.pinimg.com/originals/93/9e/cd/939ecdf241815e1de953bc9d27369fcf.jpg",
         "artists": _popular_artists(books),
     }
     context.update(_page_sections())
@@ -306,6 +322,7 @@ def artist_detail(request, pk):
         "artist": artist,
         "artist_books": artist_books,
         "artist_image": f"/media/{_artist_image(artist_index)}",
+        "artist_about_image": f"/media/{_artist_image(artist_index)}",
     }
     return render(request, "books/artist_detail.html", context)
 
@@ -318,6 +335,7 @@ def artist_profile(request, slug):
     context = {
         "artist": {"name": artist["name"]},
         "artist_image": artist["image"],
+        "artist_about_image": _artist_about_image(slug, artist["image"]),
         "artist_bio": ui.get(artist["bio_key"], ""),
         "popular_tracks": _artist_tracks(slug, artist["image"]),
         "collections": _artist_collections(slug),
