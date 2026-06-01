@@ -127,6 +127,18 @@ ARTIST_TRACKS = {
     ],
 }
 
+ARTIST_MEMBERS = {
+    "bts": [
+        {"name": "RM", "role": "Leader, Rapper", "image": "https://commons.wikimedia.org/wiki/Special:FilePath/190501_BTS_RM_at_the_2019_BBMAs_%28cropped%29.png"},
+        {"name": "Jin", "role": "Vocalist", "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jin_on_the_Billboard_Music_Awards_red_carpet%2C_1_May_2019.jpg"},
+        {"name": "Suga", "role": "Rapper, Producer", "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Suga_on_the_Billboard_Music_Awards_red_carpet%2C_1_May_2019_01.jpg"},
+        {"name": "J-Hope", "role": "Rapper, Dancer", "image": "https://commons.wikimedia.org/wiki/Special:FilePath/J-Hope_on_the_Billboard_Music_Awards_red_carpet%2C_1_May_2019.jpg"},
+        {"name": "Jimin", "role": "Vocalist, Dancer", "image": "https://commons.wikimedia.org/wiki/Special:FilePath/190501_BTS_Jimin_at_the_2019_BBMAs.png"},
+        {"name": "V", "role": "Vocalist", "image": "https://commons.wikimedia.org/wiki/Special:FilePath/V_on_the_Billboard_Music_Awards_red_carpet%2C_1_May_2019_02.jpg"},
+        {"name": "Jungkook", "role": "Vocalist", "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jungkook_on_the_Billboard_Music_Awards_red_carpet%2C_1_May_2019.jpg"},
+    ]
+}
+
 ARTICLES = [
     {
         "slug": "summer-music-trends",
@@ -159,12 +171,12 @@ ARTICLES = [
 
 
 def _artist_tracks(slug, image):
-    covers = [
-        "cover-a",
-        "cover-b",
-        "cover-c",
-        "cover-d",
-        "cover-e",
+    cover_images = [
+        "/media/books/golden_dragon_internal_flight.png",
+        "/media/books/all_woman.png",
+        "/media/books/she_will_be_loved.png",
+        "/media/books/i_want_to_know_what_love_is.png",
+        "/media/books/stay_with_me.png",
     ]
     tracks = []
     for index, (title, plays, duration) in enumerate(ARTIST_TRACKS.get(slug, [])):
@@ -173,10 +185,42 @@ def _artist_tracks(slug, image):
             "plays": plays,
             "duration": duration,
             "image": image,
-            "cover_skin": covers[index % len(covers)],
+            "cover_image": cover_images[index % len(cover_images)],
             "logo": "".join(word[0] for word in title.split()[:3]).upper(),
         })
     return tracks
+
+
+def _artist_collections(slug):
+    base_covers = [
+        "/media/books/golden_dragon_internal_flight.png",
+        "/media/books/stay_with_me.png",
+        "/media/books/all_woman.png",
+        "/media/books/i_miss_you.png",
+        "/media/books/she_will_be_loved.png",
+        "/media/books/hotel_california.png",
+        "/media/books/i_want_to_know_what_love_is.png",
+        "/media/books/i_will_always_love_you.png",
+    ]
+    names = {
+        "bts": ["This Is BTS", "BTS Essentials", "K-Pop Hit Mix", "Dance Pop 2026"],
+        "britney-spears": ["This Is Britney", "Pop Princess", "Y2K Hits", "Dance Classics"],
+        "michael-jackson": ["This Is Michael", "King of Pop", "Moonwalk Mix", "80s Pop Icons"],
+        "taylor-swift": ["This Is Taylor", "Pop International", "Swift Essentials", "Storyteller"],
+        "the-weeknd": ["This Is The Weeknd", "After Hours Mix", "Mega Hit Mix", "Starboy Set"],
+        "billie-eilish": ["This Is Billie", "Dark Pop", "Bedroom Pop", "Soft Hits"],
+        "lady-gaga": ["This Is Gaga", "Dance Pop", "Monster Hits", "Club Classics"],
+        "drake": ["This Is Drake", "Hip-Hop Mix", "R&B Rap", "Chart Kings"],
+    }
+    titles = names.get(slug, ["This Is Artist", "Mega Hit Mix", "Essentials", "Best Songs"])
+    return [
+        {
+            "title": title,
+            "subtitle": "TuneSpace",
+            "cover_image": base_covers[index % len(base_covers)],
+        }
+        for index, title in enumerate(titles + titles[:4])
+    ]
 
 
 def _artist_image(index):
@@ -276,6 +320,8 @@ def artist_profile(request, slug):
         "artist_image": artist["image"],
         "artist_bio": ui.get(artist["bio_key"], ""),
         "popular_tracks": _artist_tracks(slug, artist["image"]),
+        "collections": _artist_collections(slug),
+        "members": ARTIST_MEMBERS.get(slug, []),
     }
     return render(request, "books/artist_detail.html", context)
 

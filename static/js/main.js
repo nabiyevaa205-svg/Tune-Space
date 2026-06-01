@@ -71,5 +71,58 @@
       wave?.classList.remove("is-playing");
     });
   }
+
+  document.querySelectorAll(".artist-follow-btn").forEach((followBtn) => {
+    const artist = followBtn.dataset.followArtist || "artist";
+    const storageKey = `tunespace-follow-${artist.toLowerCase().replace(/\s+/g, "-")}`;
+    const followLabel = followBtn.dataset.followLabel || "Follow";
+    const followingLabel = followBtn.dataset.followingLabel || "Following";
+
+    const setFollowState = (isFollowing) => {
+      followBtn.classList.toggle("is-following", isFollowing);
+      followBtn.textContent = isFollowing ? followingLabel : followLabel;
+      followBtn.setAttribute("aria-pressed", isFollowing ? "true" : "false");
+    };
+
+    setFollowState(localStorage.getItem(storageKey) === "1");
+
+    followBtn.addEventListener("click", () => {
+      const nextState = !followBtn.classList.contains("is-following");
+      localStorage.setItem(storageKey, nextState ? "1" : "0");
+      setFollowState(nextState);
+    });
+  });
+
+  const artworkCache = new Map();
+  const artworkNodes = document.querySelectorAll("[data-artwork-title]");
+
+  artworkNodes.forEach(async (node) => {
+    const artist = node.dataset.artworkArtist || "";
+    const title = node.dataset.artworkTitle || "";
+    const img = node.querySelector("img");
+    if (!artist || !title || !img) return;
+
+    const cacheKey = `${artist} ${title}`.toLowerCase();
+    const cached = artworkCache.get(cacheKey);
+    if (cached) {
+      img.src = cached;
+      return;
+    }
+
+    try {
+      const query = encodeURIComponent(`${artist} ${title}`);
+      const res = await fetch(`https://itunes.apple.com/search?term=${query}&entity=song&limit=1`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const artwork = data.results?.[0]?.artworkUrl100;
+      if (!artwork) return;
+
+      const highResArtwork = artwork.replace("100x100bb", "600x600bb");
+      artworkCache.set(cacheKey, highResArtwork);
+      img.src = highResArtwork;
+    } catch (err) {
+      // Keep the local fallback cover if artwork lookup is unavailable.
+    }
+  });
   
 });

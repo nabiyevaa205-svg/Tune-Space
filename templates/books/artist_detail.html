@@ -24,7 +24,7 @@
 
             <div class="artist-action-row">
                 <button class="listen-btn" type="button">{{ ui.listen }}</button>
-                <button class="artist-icon-btn" type="button" aria-label="{{ ui.follow }}">+</button>
+                <button class="artist-follow-btn" type="button" data-follow-artist="{{ artist.name }}" data-follow-label="{{ ui.follow }}" data-following-label="{{ ui.following }}">{{ ui.follow }}</button>
             </div>
 
             <nav class="artist-tabs" aria-label="Artist tabs">
@@ -37,9 +37,8 @@
                 {% for track in popular_tracks %}
                 <article class="artist-song-item">
                     <span>{{ forloop.counter|stringformat:"02d" }}</span>
-                    <span class="mini-cover {{ track.cover_skin }}">
-                        <img src="{{ track.image }}" alt="{{ track.title }}">
-                        <i>{{ track.logo }}</i>
+                    <span class="mini-cover" data-artwork-artist="{{ artist.name }}" data-artwork-title="{{ track.title }}">
+                        <img src="{{ track.cover_image }}" alt="{{ track.title }}">
                     </span>
                     <strong>{{ track.title }}</strong>
                     <em>{{ track.plays }}</em>
@@ -51,15 +50,61 @@
     </div>
 </section>
 
-<section class="section-block artist-release-section reveal">
-    <h2 class="section-title">{{ ui.album_releases }}</h2>
-    <div class="release-grid">
+<section class="artist-about-section reveal" id="about">
+    <h2>{{ ui.about }}</h2>
+    <article class="artist-about-card">
+        <img src="{{ artist_image }}" alt="{{ artist.name }}">
+        <div class="artist-rank">#3<br><span>{{ ui.popular }}</span></div>
+        <div>
+            <strong>114,883,250 {{ ui.monthly_listeners }}</strong>
+            <p>{{ artist_bio }}</p>
+        </div>
+    </article>
+</section>
+
+{% if members %}
+<section class="artist-members-section reveal">
+    <div class="section-heading">
+        <h2 class="section-title">{{ ui.members }}</h2>
+        <a href="#">{{ ui.show_all }}</a>
+    </div>
+    <div class="member-scroller" aria-label="{{ ui.members }}">
+        {% for member in members %}
+            <article class="member-card">
+                <img src="{{ member.image }}" alt="{{ member.name }}">
+                <strong>{{ member.name }}</strong>
+                <span>{{ member.role }}</span>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="artist-release-section reveal">
+    <div class="section-heading">
+        <h2 class="section-title">{{ ui.discovered_on }}</h2>
+        <a href="#">{{ ui.show_all }}</a>
+    </div>
+    <div class="release-scroller">
+        {% for item in collections %}
+            <a class="release-card" href="#">
+                <span class="release-cover" data-artwork-artist="{{ artist.name }}" data-artwork-title="{{ item.title }}">
+                    <img src="{{ item.cover_image }}" alt="{{ item.title }}">
+                </span>
+                <strong>{{ item.title }}</strong>
+                <span>{{ item.subtitle }}</span>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="artist-release-section reveal">
+    <h2 class="section-title">{{ ui.artist_playlists }}</h2>
+    <div class="release-scroller compact">
         {% for track in popular_tracks %}
             <a class="release-card" href="#">
-                <span class="release-cover {{ track.cover_skin }}">
-                    <img src="{{ track.image }}" alt="{{ track.title }}">
-                    <i>{{ track.logo }}</i>
-                    <small>{{ artist.name }}</small>
+                <span class="release-cover" data-artwork-artist="{{ artist.name }}" data-artwork-title="{{ track.title }}">
+                    <img src="{{ track.cover_image }}" alt="{{ track.title }}">
                 </span>
                 <strong>{{ track.title }}</strong>
                 <span>{{ artist.name }}</span>

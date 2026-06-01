@@ -306,6 +306,24 @@ input {
     font-weight: 900;
 }
 
+.artist-follow-btn {
+    min-width: 106px;
+    min-height: 34px;
+    border: 1px solid #23c6df;
+    border-radius: 999px;
+    background: transparent;
+    color: #23c6df;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 900;
+    padding: 0 16px;
+}
+
+.artist-follow-btn.is-following {
+    background: rgba(35, 198, 223, 0.16);
+    color: #ffffff;
+}
+
 .artist-tabs {
     display: flex;
     gap: 28px;
@@ -370,19 +388,7 @@ input {
     height: 100%;
     border-radius: 3px;
     object-fit: cover;
-    opacity: 0.58;
-}
-
-.mini-cover i {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    color: #ffffff;
-    font-size: 0.72rem;
-    font-style: normal;
-    font-weight: 950;
-    letter-spacing: 0;
+    opacity: 1;
 }
 
 .artist-song-item strong {
@@ -408,10 +414,19 @@ input {
     margin-top: 32px;
 }
 
-.release-grid {
+.release-scroller {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 20px;
+    grid-auto-flow: column;
+    grid-auto-columns: 150px;
+    gap: 18px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.release-scroller.compact {
+    grid-auto-columns: 132px;
 }
 
 .release-card {
@@ -419,8 +434,7 @@ input {
     text-decoration: none;
 }
 
-.release-cover,
-.release-card img {
+.release-cover {
     width: 100%;
     aspect-ratio: 1;
 }
@@ -438,53 +452,8 @@ input {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.62;
-    transform: scale(1.08);
-}
-
-.release-cover::after,
-.mini-cover::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    mix-blend-mode: screen;
-}
-
-.cover-a::after { background: linear-gradient(135deg, rgba(255, 45, 112, 0.78), rgba(28, 215, 255, 0.18)); }
-.cover-b::after { background: linear-gradient(135deg, rgba(123, 54, 255, 0.78), rgba(255, 196, 77, 0.28)); }
-.cover-c::after { background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(25, 25, 25, 0.82)); }
-.cover-d::after { background: linear-gradient(135deg, rgba(32, 224, 164, 0.68), rgba(45, 93, 255, 0.32)); }
-.cover-e::after { background: linear-gradient(135deg, rgba(255, 118, 54, 0.72), rgba(255, 255, 255, 0.16)); }
-
-.release-cover i {
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    top: 50%;
-    z-index: 1;
-    color: #ffffff;
-    font-size: clamp(1.7rem, 4vw, 3.4rem);
-    font-style: normal;
-    font-weight: 950;
-    letter-spacing: 0;
-    line-height: 0.9;
-    text-align: center;
-    text-shadow: 0 10px 26px rgba(0, 0, 0, 0.54);
-    transform: translateY(-50%);
-}
-
-.release-cover small {
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    z-index: 1;
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 0.62rem;
-    font-weight: 850;
-    letter-spacing: 0.08em;
-    text-align: center;
-    text-transform: uppercase;
+    opacity: 1;
+    transform: none;
 }
 
 .release-card strong {
@@ -499,6 +468,130 @@ input {
 .release-card span {
     color: #8f899a;
     font-size: 0.76rem;
+}
+
+.artist-about-section {
+    margin-top: 34px;
+}
+
+.artist-about-section h2 {
+    margin: 0 0 14px;
+    color: #ffffff;
+    font-size: 1.2rem;
+}
+
+.artist-about-card {
+    min-height: 265px;
+    display: flex;
+    align-items: end;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #0f1018;
+    padding: 24px;
+}
+
+.artist-about-card > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 18%;
+}
+
+.artist-about-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.78));
+}
+
+.artist-about-card > div:not(.artist-rank) {
+    position: relative;
+    z-index: 1;
+}
+
+.artist-about-card strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.artist-about-card p {
+    max-width: 680px;
+    margin: 0;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.55;
+}
+
+.artist-rank {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    width: 60px;
+    height: 60px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #1677f2;
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 950;
+    line-height: 0.9;
+    text-align: center;
+    z-index: 2;
+}
+
+.artist-rank span {
+    font-size: 0.56rem;
+    font-weight: 800;
+}
+
+.artist-members-section {
+    margin-top: 34px;
+}
+
+.member-scroller {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 170px;
+    gap: 18px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.member-card {
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.055);
+    padding: 12px;
+}
+
+.member-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 7px;
+    object-fit: cover;
+    object-position: center top;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.34);
+}
+
+.member-card strong {
+    display: block;
+    margin-top: 10px;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.member-card span {
+    display: block;
+    margin-top: 3px;
+    color: #8f899a;
+    font-size: 0.74rem;
 }
 
 @media (max-width: 720px) {
@@ -530,8 +623,9 @@ input {
         display: none;
     }
 
-    .release-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .release-scroller,
+    .release-scroller.compact {
+        grid-auto-columns: 126px;
     }
 }
 
