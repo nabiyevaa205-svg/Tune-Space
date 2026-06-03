@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TuneSpace{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=about-cover-11">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=menu-panel-16">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -14,9 +14,23 @@
     {% block header %}
     <header class="site-header">
         <div class="container nav-wrap">
-            <a class="menu-mark" href="{% url 'home' %}" aria-label="{{ ui.tracks }}"><span></span><span></span><span></span></a>
+            <button class="menu-mark" type="button" aria-label="Menu" aria-controls="desktop-menu main-navigation" aria-expanded="false" data-menu-toggle><span></span><span></span><span></span></button>
             <a class="brand" href="{% url 'home' %}"><strong>TUNE</strong><span>SPACE</span></a>
-            <nav class="main-nav" aria-label="Main navigation">
+            <nav class="menu-panel" id="desktop-menu" aria-label="Menu">
+                <a href="{% url 'home' %}">{{ ui.tracks }}</a>
+                <a href="{% url 'about' %}">{{ ui.about }}</a>
+                {% if user.is_authenticated %}
+                    <span class="user-name">{{ ui.hi }}, {{ user.username }}!</span>
+                    <form action="{% url 'logout' %}" method="post" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">{{ ui.logout }}</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">{{ ui.login }}</a>
+                    <a href="{% url 'register' %}">{{ ui.signup }}</a>
+                {% endif %}
+            </nav>
+            <nav class="main-nav" id="main-navigation" aria-label="Main navigation">
                 <a href="{% url 'home' %}">{{ ui.tracks }}</a>
                 <a href="{% url 'about' %}">{{ ui.about }}</a>
 
@@ -41,6 +55,7 @@
             </nav>
         </div>
     </header>
+    <div class="nav-backdrop" data-menu-close></div>
     {% endblock %}
 
     <main class="container content">
@@ -84,6 +99,6 @@
     </footer>
     {% endblock %}
 
-    <script src="{% static 'js/main.js' %}?v=itunes-artwork-1"></script>
+    <script src="{% static 'js/main.js' %}?v=menu-panel-3"></script>
 </body>
 </html>

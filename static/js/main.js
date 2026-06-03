@@ -124,5 +124,35 @@
       // Keep the local fallback cover if artwork lookup is unavailable.
     }
   });
-  
+
+  const menuToggle = document.querySelector("[data-menu-toggle]");
+  const menuClose = document.querySelector("[data-menu-close]");
+  const mainNav = document.getElementById("main-navigation");
+  const desktopMenu = document.getElementById("desktop-menu");
+
+  if (menuToggle && mainNav) {
+    const setMenuOpen = (isOpen) => {
+      document.body.classList.toggle("menu-open", isOpen);
+      menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    };
+
+    menuToggle.addEventListener("click", () => {
+      setMenuOpen(!document.body.classList.contains("menu-open"));
+    });
+
+    menuClose?.addEventListener("click", () => setMenuOpen(false));
+
+    mainNav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => setMenuOpen(false));
+    });
+
+    desktopMenu?.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => setMenuOpen(false));
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    });
+  }
+
 });
