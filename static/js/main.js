@@ -155,4 +155,34 @@
     });
   }
 
+  const settingsLinks = document.querySelectorAll(".settings-sidebar a[href^='#']");
+  const settingsSections = Array.from(settingsLinks)
+    .map((link) => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
+
+  settingsLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      settingsLinks.forEach((item) => item.classList.remove("active"));
+      link.classList.add("active");
+    });
+  });
+
+  if (settingsLinks.length && "IntersectionObserver" in window) {
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+
+        settingsLinks.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`);
+        });
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0.12, 0.35, 0.6] }
+    );
+
+    settingsSections.forEach((section) => sectionObserver.observe(section));
+  }
+
 });

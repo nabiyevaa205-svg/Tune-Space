@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TuneSpace{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=menu-panel-16">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=settings-sticky-29">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -20,6 +20,7 @@
                 <a href="{% url 'home' %}">{{ ui.tracks }}</a>
                 <a href="{% url 'about' %}">{{ ui.about }}</a>
                 {% if user.is_authenticated %}
+                    <a href="{% url 'account' %}">{{ ui.account }}</a>
                     <span class="user-name">{{ ui.hi }}, {{ user.username }}!</span>
                     <form action="{% url 'logout' %}" method="post" class="logout-form">
                         {% csrf_token %}
@@ -35,7 +36,7 @@
                 <a href="{% url 'about' %}">{{ ui.about }}</a>
 
                 {% if user.is_authenticated %}
-                    <span class="user-name">{{ ui.hi }}, {{ user.username }}!</span>
+                    <a class="user-name" href="{% url 'account' %}">{{ ui.hi }}, {{ user.username }}!</a>
                     <form action="{% url 'logout' %}" method="post" class="logout-form">
                         {% csrf_token %}
                         <button type="submit" class="logout-btn">{{ ui.logout }}</button>
@@ -99,6 +100,6 @@
     </footer>
     {% endblock %}
 
-    <script src="{% static 'js/main.js' %}?v=menu-panel-3"></script>
+    <script src="{% static 'js/main.js' %}?v=settings-tabs-4"></script>
 </body>
 </html>

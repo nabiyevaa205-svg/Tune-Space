@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ui.account }} | TuneSpace{% endblock %}
+
+{% block content %}
+<section class="account-page reveal">
+    <header class="account-hero">
+        <div>
+            <p class="eyebrow">{{ ui.account }}</p>
+            <h1>{{ ui.account_title }}</h1>
+            <p>{{ ui.account_subtitle }}</p>
+        </div>
+        <a class="account-badge" href="{% url 'profile' %}" aria-label="{{ ui.edit_profile }}">
+            <span class="account-person-icon">
+                <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="profile-ring" cx="60" cy="60" r="50"></circle>
+                    <circle class="profile-head" cx="60" cy="44" r="18"></circle>
+                    <path class="profile-shoulders" d="M30 98a30 30 0 0 1 60 0"></path>
+                </svg>
+            </span>
+            <strong>{{ ui.edit_profile }}</strong>
+        </a>
+    </header>
+
+    <div class="account-stats">
+        <article>
+            <strong>{{ favorite_tracks|length }}</strong>
+            <span>{{ ui.favorite_music }}</span>
+        </article>
+        <article>
+            <strong>{{ playable_count }}</strong>
+            <span>{{ ui.playable }}</span>
+        </article>
+        <article>
+            <strong>{{ profile.get_subscription_display }}</strong>
+            <span>{{ ui.subscription }}</span>
+        </article>
+    </div>
+
+    <section class="account-section">
+        <div class="section-heading">
+            <h2 class="section-title">{{ ui.favorite_music }}</h2>
+            <a href="{% url 'home' %}">{{ ui.tracks }}</a>
+        </div>
+
+        <div class="favorite-grid">
+            {% for track in favorite_tracks %}
+                <article class="favorite-card">
+                    {% if track.cover %}
+                        <img src="{{ track.cover.url }}" alt="{{ track.title }}">
+                    {% else %}
+                        <span class="favorite-cover-placeholder">{{ track.title|slice:":1" }}</span>
+                    {% endif %}
+                    <div>
+                        <h3>{{ track.title }}</h3>
+                        <p>{{ track.author }}</p>
+                    </div>
+                    <a class="mini-link" href="{% url 'book_detail' track.pk %}">{{ ui.open }}</a>
+                </article>
+            {% empty %}
+                <p class="empty-copy">{{ ui.no_favorites }}</p>
+            {% endfor %}
+        </div>
+    </section>
+</section>
+{% endblock %}

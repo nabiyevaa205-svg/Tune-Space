@@ -5,6 +5,8 @@ from . import views
 from .forms import LoginForm
 
 urlpatterns = [
+    path("account/", views.account, name="account"),
+    path("profile/", views.profile, name="profile"),
     path(
         "login/",
         auth_views.LoginView.as_view(

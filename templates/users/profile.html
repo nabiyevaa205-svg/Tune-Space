@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ui.edit_profile }} | TuneSpace{% endblock %}
+
+{% block content %}
+<section class="settings-page reveal">
+    <h1>{{ ui.account_settings }}</h1>
+
+    <div class="settings-shell">
+        <aside class="settings-sidebar" aria-label="{{ ui.account_settings }}">
+            <a class="{% if active_section == 'profile' %}active{% endif %}" href="#profile-settings"><span>●</span>{{ ui.profile_settings }}</a>
+            <a class="{% if active_section == 'password' %}active{% endif %}" href="#password-settings"><span>◇</span>{{ ui.password }}</a>
+            <a class="{% if active_section == 'notifications' %}active{% endif %}" href="#notification-settings"><span>△</span>{{ ui.notifications }}</a>
+            <a class="{% if active_section == 'verification' %}active{% endif %}" href="#verification-settings"><span>✦</span>{{ ui.verification }}</a>
+        </aside>
+
+        <form class="settings-card" id="profile-settings" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="section" value="profile">
+            <div class="settings-avatar-row">
+                <div class="settings-avatar">
+                    {% if profile.photo %}
+                        <img src="{{ profile.photo.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <strong>{{ user.username|slice:":1"|upper }}</strong>
+                    {% endif %}
+                    <label class="avatar-camera" for="{{ profile_form.photo.id_for_label }}">+</label>
+                </div>
+                <div class="avatar-actions">
+                    <label class="settings-upload" for="{{ profile_form.photo.id_for_label }}">{{ ui.upload_new }}</label>
+                    <span class="settings-muted">{{ ui.profile_photo }}</span>
+                    {{ profile_form.photo }}
+                    {% if profile_form.photo.errors %}<small class="field-error">{{ profile_form.photo.errors|striptags }}</small>{% endif %}
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <div class="form-row">
+                    <label for="{{ account_form.first_name.id_for_label }}">{{ ui.first_name }}</label>
+                    {{ account_form.first_name }}
+                    {% if account_form.first_name.errors %}<small class="field-error">{{ account_form.first_name.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row">
+                    <label for="{{ account_form.last_name.id_for_label }}">{{ ui.last_name }}</label>
+                    {{ account_form.last_name }}
+                    {% if account_form.last_name.errors %}<small class="field-error">{{ account_form.last_name.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row">
+                    <label for="{{ account_form.email.id_for_label }}">{{ ui.email }}</label>
+                    {{ account_form.email }}
+                    {% if account_form.email.errors %}<small class="field-error">{{ account_form.email.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row">
+                    <label for="{{ account_form.username.id_for_label }}">{{ ui.username }}</label>
+                    {{ account_form.username }}
+                    {% if account_form.username.errors %}<small class="field-error">{{ account_form.username.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row">
+                    <label for="{{ profile_form.age.id_for_label }}">{{ ui.age }}</label>
+                    {{ profile_form.age }}
+                    {% if profile_form.age.errors %}<small class="field-error">{{ profile_form.age.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row">
+                    <label for="{{ profile_form.city.id_for_label }}">{{ ui.city }}</label>
+                    {{ profile_form.city }}
+                    {% if profile_form.city.errors %}<small class="field-error">{{ profile_form.city.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row full choice-row gender-row">
+                    <label>{{ ui.gender }}</label>
+                    {{ profile_form.gender }}
+                    {% if profile_form.gender.errors %}<small class="field-error">{{ profile_form.gender.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row full choice-row">
+                    <label>{{ ui.interests }}</label>
+                    {{ profile_form.interests }}
+                    {% if profile_form.interests.errors %}<small class="field-error">{{ profile_form.interests.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row full choice-row subscription-row">
+                    <label>{{ ui.subscription }}</label>
+                    {{ profile_form.subscription }}
+                    {% if profile_form.subscription.errors %}<small class="field-error">{{ profile_form.subscription.errors|striptags }}</small>{% endif %}
+                </div>
+                <button class="settings-save" type="submit">{{ ui.save_changes }}</button>
+            </div>
+        </form>
+
+        <section class="settings-card settings-extra" id="password-settings">
+            <h2>{{ ui.password }}</h2>
+            <form class="settings-grid" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="section" value="password">
+                <div class="form-row">
+                    <label for="{{ password_form.old_password.id_for_label }}">{{ ui.old_password }}</label>
+                    {{ password_form.old_password }}
+                    {% if password_form.old_password.errors %}<small class="field-error">{{ password_form.old_password.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row">
+                    <label for="{{ password_form.new_password1.id_for_label }}">{{ ui.new_password }}</label>
+                    {{ password_form.new_password1 }}
+                    {% if password_form.new_password1.errors %}<small class="field-error">{{ password_form.new_password1.errors|striptags }}</small>{% endif %}
+                </div>
+                <div class="form-row">
+                    <label for="{{ password_form.new_password2.id_for_label }}">{{ ui.repeat_password }}</label>
+                    {{ password_form.new_password2 }}
+                    {% if password_form.new_password2.errors %}<small class="field-error">{{ password_form.new_password2.errors|striptags }}</small>{% endif %}
+                </div>
+                <button class="settings-save" type="submit">{{ ui.save_changes }}</button>
+            </form>
+        </section>
+
+        <section class="settings-card settings-extra" id="notification-settings">
+            <h2>{{ ui.notifications }}</h2>
+            <form class="settings-list-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="section" value="notifications">
+                <label class="settings-toggle">
+                    {{ notification_form.email_notifications }}
+                    <span></span>
+                    <strong>{{ ui.email_notifications }}</strong>
+                </label>
+                <label class="settings-toggle">
+                    {{ notification_form.release_notifications }}
+                    <span></span>
+                    <strong>{{ ui.release_notifications }}</strong>
+                </label>
+                <button class="settings-save" type="submit">{{ ui.save_changes }}</button>
+            </form>
+        </section>
+
+        <section class="settings-card settings-extra" id="verification-settings">
+            <h2>{{ ui.verification }}</h2>
+            <p class="settings-copy">{{ ui.verification_text }}</p>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="section" value="verification">
+                <button class="settings-save" type="submit">
+                    {% if profile.verification_requested %}{{ ui.verification_requested }}{% else %}{{ ui.request_verification }}{% endif %}
+                </button>
+            </form>
+        </section>
+    </div>
+</section>
+{% endblock %}
