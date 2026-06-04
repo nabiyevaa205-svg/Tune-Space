@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.files.storage import default_storage
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.translation import get_language
@@ -341,6 +342,36 @@ def _page_sections():
 
 
 def _book_list_context(books, **extra):
+    language = get_language()
+    search_copy = {
+        "kk": {
+            "title": "Ән іздеу",
+            "placeholder": "Ән немесе артист атауы...",
+            "button": "Іздеу",
+            "clear": "Тазалау",
+            "empty": "Бұл іздеу бойынша ән табылмады.",
+        },
+        "ru": {
+            "title": "Поиск песен",
+            "placeholder": "Название песни или артист...",
+            "button": "Искать",
+            "clear": "Очистить",
+            "empty": "По этому запросу песен не найдено.",
+        },
+        "en": {
+            "title": "Search songs",
+            "placeholder": "Song title or artist...",
+            "button": "Search",
+            "clear": "Clear",
+            "empty": "No songs found for this search.",
+        },
+    }.get(language, {
+        "title": "Search songs",
+        "placeholder": "Song title or artist...",
+        "button": "Search",
+        "clear": "Clear",
+        "empty": "No songs found for this search.",
+    })
     context = {
         "books": books,
         "top_albums": books[:12],
@@ -349,19 +380,34 @@ def _book_list_context(books, **extra):
         "hero_artist": POPULAR_ARTISTS[5],
         "hero_image": "https://i.pinimg.com/originals/93/9e/cd/939ecdf241815e1de953bc9d27369fcf.jpg",
         "artists": _popular_artists(books),
+        "search_copy": search_copy,
+        "search_query": "",
     }
     context.update(_page_sections())
     context.update(extra)
     return context
 
 
+def _filter_books(query):
+    books = Book.objects.select_related("author").prefetch_related("genres").all()
+    if query:
+        books = books.filter(
+            Q(title__icontains=query)
+            | Q(author__name__icontains=query)
+            | Q(description__icontains=query)
+            | Q(genres__name__icontains=query)
+        ).distinct()
+    return books
+
+
 def book_list(request):
-    books = Book.objects.all()
-    return render(request, "books/book_list.html", _book_list_context(books))
+    query = request.GET.get("q", "").strip()
+    books = _filter_books(query)
+    return render(request, "books/book_list.html", _book_list_context(books, search_query=query))
 
 
 def book_search(request, slug):
-    books = Book.objects.filter(title__icontains=slug)
+    books = _filter_books(slug)
     return render(request, "books/book_list.html", _book_list_context(books, search_query=slug))
 
 

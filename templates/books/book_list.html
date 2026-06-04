@@ -59,11 +59,24 @@
 </section>
 
 <section class="section-block reveal">
-    <h2 class="section-title">{{ ui.latest_songs }} <span>{{ ui.songs }}</span></h2>
-    <div class="song-row" id="track-grid">
+    <div class="section-heading song-search-heading">
+        <h2 class="section-title">{{ ui.latest_songs }} <span>{{ ui.songs }}</span></h2>
+        <form class="song-search-form" action="{% url 'home' %}" method="get" role="search">
+            <label>
+                <span>{{ search_copy.title }}</span>
+                <input type="search" name="q" value="{{ search_query }}" placeholder="{{ search_copy.placeholder }}" autocomplete="off" data-song-search>
+            </label>
+            <button type="submit">{{ search_copy.button }}</button>
+            {% if search_query %}
+                <a href="{% url 'home' %}#track-grid">{{ search_copy.clear }}</a>
+            {% endif %}
+        </form>
+    </div>
+    <p class="song-search-empty" data-song-search-empty hidden>{{ search_copy.empty }}</p>
+    <div class="song-row" id="track-grid" data-song-grid>
         {% if latest_songs %}
             {% for book in latest_songs %}
-                <a class="song-card" href="{% url 'book_detail' book.pk %}" data-track="{{ book.title|lower }}" data-artist="{{ book.author|lower }}" data-artwork-title="{{ book.title }}" data-artwork-artist="{{ book.author.name }}">
+                <a class="song-card" href="{% url 'book_detail' book.pk %}" data-track="{{ book.title|lower }}" data-artist="{{ book.author|lower }}" data-description="{{ book.description|default:''|lower }}" data-artwork-title="{{ book.title }}" data-artwork-artist="{{ book.author.name }}">
                     {% if book.cover %}
                         <img src="{{ book.cover.url }}" alt="{{ book.title }}">
                     {% else %}

@@ -34,6 +34,10 @@
     const progressFill = document.getElementById("audio-progress-fill");
     const volumeInput = document.getElementById("audio-volume");
     const playPage = document.querySelector(".play-page");
+    const previewTitle = player.dataset.previewTitle || "";
+    const previewArtist = player.dataset.previewArtist || "";
+    const localSrc = player.dataset.localSrc || "";
+    let previewLoaded = false;
 
     const format = (sec) => {
       if (!Number.isFinite(sec)) return "00:00";
@@ -70,6 +74,34 @@
     player.addEventListener("loadedmetadata", updateTime);
     player.addEventListener("timeupdate", updateTime);
 
+    const loadInternetPreview = async () => {
+      if (previewLoaded || player.currentSrc) return true;
+      const query = encodeURIComponent(`${previewArtist} ${previewTitle}`);
+      try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${query}&entity=song&limit=1`);
+        if (res.ok) {
+          const data = await res.json();
+          const previewUrl = data.results?.[0]?.previewUrl;
+          if (previewUrl) {
+            player.src = previewUrl;
+            previewLoaded = true;
+            player.load();
+            return true;
+          }
+        }
+      } catch (err) {
+        // Fall back to a local file if the browser cannot reach the preview API.
+      }
+
+      if (localSrc) {
+        player.src = localSrc;
+        previewLoaded = true;
+        player.load();
+        return true;
+      }
+      return false;
+    };
+
     if (volumeInput) {
       const syncVolume = () => {
         const volume = Number(volumeInput.value);
@@ -84,9 +116,16 @@
     toggleBtns.forEach((toggleBtn) => {
       toggleBtn.addEventListener("click", async () => {
         if (player.paused) {
-          await player.play();
-          setToggleLabels(true);
-          wave?.classList.add("is-playing");
+          const hasAudio = await loadInternetPreview();
+          if (!hasAudio) return;
+          try {
+            await player.play();
+            setToggleLabels(true);
+            wave?.classList.add("is-playing");
+          } catch (err) {
+            setToggleLabels(false);
+            wave?.classList.remove("is-playing");
+          }
         } else {
           player.pause();
           setToggleLabels(false);
@@ -146,10 +185,16 @@
     let img = node.querySelector("img");
     if (!artist || !title) return;
     if (!img) {
-      const placeholder = node.querySelector(".mini-thumb");
+      const placeholder = node.querySelector(".mini-thumb, .cover-placeholder");
       if (!placeholder) return;
       img = document.createElement("img");
       img.alt = title;
+      if (placeholder.classList.contains("cover-placeholder")) {
+        img.className = placeholder.className
+          .toString()
+          .replace(/\bcover-placeholder\b/g, "")
+          .trim() || "play-cover";
+      }
       placeholder.replaceWith(img);
     }
 
@@ -162,19 +207,76 @@
 
     try {
       const query = encodeURIComponent(`${artist} ${title}`);
-      const res = await fetch(`https://itunes.apple.com/search?term=${query}&entity=song&limit=1`);
+      const res = await fetch(`https://itunes.apple.com/search?term=${query}&entity=song&country=US&limit=1`);
       if (!res.ok) return;
       const data = await res.json();
       const artwork = data.results?.[0]?.artworkUrl100;
       if (!artwork) return;
 
-      const highResArtwork = artwork.replace("100x100bb", "600x600bb");
+      const highResArtwork = artwork.replace("100x100bb", "1000x1000bb");
       artworkCache.set(cacheKey, highResArtwork);
       img.src = highResArtwork;
     } catch (err) {
       // Keep the local fallback cover if artwork lookup is unavailable.
     }
   });
+
+  const artistPhotoCache = new Map();
+  document.querySelectorAll("[data-artist-photo]").forEach(async (img) => {
+    const artist = img.dataset.artistPhoto || "";
+    if (!artist) return;
+
+    const cacheKey = artist.toLowerCase();
+    const cached = artistPhotoCache.get(cacheKey);
+    if (cached) {
+      img.src = cached;
+      return;
+    }
+
+    try {
+      const title = encodeURIComponent(artist.replace(/\s+/g, "_"));
+      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const photo = data.thumbnail?.source || data.originalimage?.source;
+      if (!photo) return;
+
+      artistPhotoCache.set(cacheKey, photo);
+      img.src = photo;
+    } catch (err) {
+      // Keep the server-side fallback image if Wikipedia does not return a photo.
+    }
+  });
+
+  const songSearch = document.querySelector("[data-song-search]");
+  const songGrid = document.querySelector("[data-song-grid]");
+  const songSearchEmpty = document.querySelector("[data-song-search-empty]");
+
+  if (songSearch && songGrid) {
+    const cards = Array.from(songGrid.querySelectorAll(".song-card"));
+    const filterSongs = () => {
+      const query = songSearch.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const haystack = [
+          card.dataset.track || "",
+          card.dataset.artist || "",
+          card.dataset.description || "",
+        ].join(" ");
+        const isVisible = !query || haystack.includes(query);
+        card.hidden = !isVisible;
+        if (isVisible) visibleCount += 1;
+      });
+
+      if (songSearchEmpty) {
+        songSearchEmpty.hidden = visibleCount !== 0;
+      }
+    };
+
+    songSearch.addEventListener("input", filterSongs);
+    filterSongs();
+  }
 
   const menuToggle = document.querySelector("[data-menu-toggle]");
   const menuClose = document.querySelector("[data-menu-close]");

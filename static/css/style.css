@@ -1113,9 +1113,37 @@ input {
 }
 
 .cover-placeholder {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
     background:
-        linear-gradient(90deg, transparent 46%, rgba(255, 255, 255, 0.16) 47%, transparent 48%),
-        repeating-linear-gradient(90deg, #20252b 0 18px, #394036 18px 32px);
+        radial-gradient(circle at 24% 18%, rgba(127, 167, 255, 0.28), transparent 34%),
+        radial-gradient(circle at 82% 76%, rgba(255, 255, 255, 0.12), transparent 36%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035)),
+        #20212c;
+}
+
+.cover-placeholder::before {
+    content: "";
+    width: 38%;
+    aspect-ratio: 1;
+    border: 2px solid rgba(255, 255, 255, 0.46);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 22px rgba(255, 255, 255, 0.045),
+        inset 0 0 26px rgba(255, 255, 255, 0.08);
+}
+
+.cover-placeholder::after {
+    content: "";
+    position: absolute;
+    right: 16%;
+    bottom: 16%;
+    width: 20%;
+    height: 8%;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .detail-card h1 {
@@ -2270,6 +2298,82 @@ body {
     font-weight: 800;
     text-decoration: none;
     white-space: nowrap;
+}
+
+.song-search-heading {
+    align-items: flex-end;
+}
+
+.song-search-form {
+    display: flex;
+    align-items: end;
+    gap: 10px;
+    width: min(100%, 600px);
+}
+
+.song-search-form label {
+    display: grid;
+    flex: 1;
+    gap: 7px;
+    min-width: 220px;
+}
+
+.song-search-form label span {
+    color: #7fa7ff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.song-search-form input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 999px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.055);
+    color: #ffffff;
+    font: inherit;
+    font-weight: 800;
+    padding: 0 18px;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.song-search-form input:focus {
+    border-color: rgba(127, 167, 255, 0.82);
+    background: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 0 0 4px rgba(127, 167, 255, 0.14);
+}
+
+.song-search-form button,
+.song-search-form a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    border: 0;
+    border-radius: 999px;
+    color: #15151f;
+    background: #ffffff;
+    font: inherit;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 0 22px;
+    cursor: pointer;
+}
+
+.song-search-form a {
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    color: #ffffff;
+    background: transparent;
+}
+
+.song-search-empty {
+    margin: -4px 0 18px;
+    color: #c4bfca;
+    font-weight: 800;
 }
 
 .artist-section {
@@ -4065,5 +4169,21 @@ body {
     .footer-grid {
         gap: 28px;
         padding: 48px 0 36px;
+    }
+}
+
+@media (max-width: 720px) {
+    .song-search-heading,
+    .song-search-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .song-search-form {
+        width: 100%;
+    }
+
+    .song-search-form label {
+        min-width: 0;
     }
 }

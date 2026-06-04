@@ -26,15 +26,9 @@
             </header>
 
             <div class="play-toolbar">
-                {% if book.audio_file %}
-                    <button class="play-main-toggle" type="button" data-action="toggle" data-play-label="{{ ui.play }}" data-pause-label="{{ ui.pause }}" aria-label="{{ ui.play }}">
-                        <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
-                    </button>
-                {% else %}
-                    <button class="play-main-toggle disabled" type="button" disabled aria-label="{{ ui.no_audio_uploaded }}">
-                        <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
-                    </button>
-                {% endif %}
+                <button class="play-main-toggle" type="button" data-action="toggle" data-play-label="{{ ui.play }}" data-pause-label="{{ ui.pause }}" aria-label="{{ ui.play }}">
+                    <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                </button>
                 <button class="play-icon-btn shuffle-btn" type="button" data-action="shuffle" aria-label="Shuffle">
                     <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h13"></path><path d="m13 4 3 3-3 3"></path><path d="M21 17H8"></path><path d="m11 14-3 3 3 3"></path></svg>
                 </button>
@@ -88,7 +82,7 @@
         <aside class="play-side">
             <h2>{{ book.title }}</h2>
             {% if artist_image %}
-                <img src="{{ artist_image }}" alt="{{ book.author.name }}">
+                <img src="{{ artist_image }}" alt="{{ book.author.name }}" data-artist-photo="{{ book.author.name }}">
             {% else %}
                 <div class="play-side-cover cover-placeholder" aria-hidden="true"></div>
             {% endif %}
@@ -123,14 +117,9 @@
         </div>
 
         <div class="play-controls">
-            {% if book.audio_file %}
-                <audio id="audio-player" preload="metadata">
-                    <source src="{{ book.audio_file.url }}">
-                    {{ ui.browser_no_audio }}
-                </audio>
-            {% else %}
-                <div class="missing-audio-note">{{ ui.no_audio_uploaded }}</div>
-            {% endif %}
+            <audio id="audio-player" preload="metadata" data-preview-title="{{ book.title }}" data-preview-artist="{{ book.author.name }}" {% if book.audio_file %}data-local-src="{{ book.audio_file.url }}"{% endif %}>
+                {{ ui.browser_no_audio }}
+            </audio>
             <div class="play-control-row">
                 <button type="button" data-action="back" aria-label="{{ ui.back_10 }}"><svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" x2="5" y1="19" y2="5"></line></svg></button>
                 <button class="bottom-toggle" type="button" data-action="toggle" data-play-label="{{ ui.play }}" data-pause-label="{{ ui.pause }}" aria-label="{{ ui.play }}"><svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg></button>
@@ -141,7 +130,7 @@
                 <div class="play-progress"><span id="audio-progress-fill"></span></div>
                 <span id="audio-duration">00:00</span>
             </div>
-            <p id="audio-time" class="audio-time">{% if book.audio_file %}00:00 / 00:00{% else %}{{ ui.no_audio_uploaded }}{% endif %}</p>
+            <p id="audio-time" class="audio-time">00:00 / 00:00</p>
             <div class="wave" id="audio-wave"></div>
         </div>
 
