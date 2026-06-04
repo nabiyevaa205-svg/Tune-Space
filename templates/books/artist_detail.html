@@ -35,7 +35,7 @@
 
             <div class="artist-song-list" id="overview">
                 {% for track in popular_tracks %}
-                <article class="artist-song-item">
+                <a class="artist-song-item" href="{{ track.url }}">
                     <span>{{ forloop.counter|stringformat:"02d" }}</span>
                     <span class="mini-cover" data-artwork-artist="{{ artist.name }}" data-artwork-title="{{ track.title }}">
                         <img src="{{ track.cover_image }}" alt="{{ track.title }}">
@@ -43,7 +43,7 @@
                     <strong>{{ track.title }}</strong>
                     <em>{{ track.plays }}</em>
                     <b>...</b>
-                    </article>
+                </a>
                 {% endfor %}
             </div>
         </div>
@@ -102,7 +102,7 @@
     <h2 class="section-title">{{ ui.artist_playlists }}</h2>
     <div class="release-scroller compact">
         {% for track in popular_tracks %}
-            <a class="release-card" href="#">
+            <a class="release-card" href="{{ track.url }}">
                 <span class="release-cover" data-artwork-artist="{{ artist.name }}" data-artwork-title="{{ track.title }}">
                     <img src="{{ track.cover_image }}" alt="{{ track.title }}">
                 </span>

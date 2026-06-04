@@ -25,10 +25,15 @@
   const player = document.getElementById("audio-player");
   if (player) {
     const timeEl = document.getElementById("audio-time");
-    const toggleBtn = document.querySelector('[data-action="toggle"]');
+    const toggleBtns = document.querySelectorAll('[data-action="toggle"]');
     const backBtn = document.querySelector('[data-action="back"]');
     const forwardBtn = document.querySelector('[data-action="forward"]');
     const wave = document.getElementById("audio-wave");
+    const currentEl = document.getElementById("audio-current");
+    const durationEl = document.getElementById("audio-duration");
+    const progressFill = document.getElementById("audio-progress-fill");
+    const volumeInput = document.getElementById("audio-volume");
+    const playPage = document.querySelector(".play-page");
 
     const format = (sec) => {
       if (!Number.isFinite(sec)) return "00:00";
@@ -38,24 +43,56 @@
     };
 
     const updateTime = () => {
-      if (timeEl) timeEl.textContent = `${format(player.currentTime)} / ${format(player.duration)}`;
+      const current = format(player.currentTime);
+      const duration = format(player.duration);
+      if (timeEl) timeEl.textContent = `${current} / ${duration}`;
+      if (currentEl) currentEl.textContent = current;
+      if (durationEl) durationEl.textContent = duration;
+      if (progressFill) {
+        const progress = player.duration ? (player.currentTime / player.duration) * 100 : 0;
+        progressFill.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+      }
+    };
+
+    const setToggleLabels = (isPlaying) => {
+      const playIcon = '<svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>';
+      const pauseIcon = '<svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+      toggleBtns.forEach((btn) => {
+        const playLabel = btn.dataset.playLabel || "Play";
+        const pauseLabel = btn.dataset.pauseLabel || "Pause";
+        btn.innerHTML = isPlaying ? pauseIcon : playIcon;
+        btn.classList.toggle("is-playing", isPlaying);
+        btn.setAttribute("aria-label", isPlaying ? pauseLabel : playLabel);
+      });
+      playPage?.classList.toggle("is-playing", isPlaying);
     };
 
     player.addEventListener("loadedmetadata", updateTime);
     player.addEventListener("timeupdate", updateTime);
 
-    toggleBtn?.addEventListener("click", async () => {
-      const playLabel = toggleBtn.dataset.playLabel || "Play";
-      const pauseLabel = toggleBtn.dataset.pauseLabel || "Pause";
-      if (player.paused) {
-        await player.play();
-        toggleBtn.textContent = pauseLabel;
-        wave?.classList.add("is-playing");
-      } else {
-        player.pause();
-        toggleBtn.textContent = playLabel;
-        wave?.classList.remove("is-playing");
-      }
+    if (volumeInput) {
+      const syncVolume = () => {
+        const volume = Number(volumeInput.value);
+        player.volume = Number.isFinite(volume) ? volume : 0.72;
+        volumeInput.style.background = `linear-gradient(90deg, #ffffff ${player.volume * 100}%, rgba(255, 255, 255, 0.22) ${player.volume * 100}%)`;
+      };
+
+      syncVolume();
+      volumeInput.addEventListener("input", syncVolume);
+    }
+
+    toggleBtns.forEach((toggleBtn) => {
+      toggleBtn.addEventListener("click", async () => {
+        if (player.paused) {
+          await player.play();
+          setToggleLabels(true);
+          wave?.classList.add("is-playing");
+        } else {
+          player.pause();
+          setToggleLabels(false);
+          wave?.classList.remove("is-playing");
+        }
+      });
     });
 
     backBtn?.addEventListener("click", () => {
@@ -67,10 +104,17 @@
     });
 
     player.addEventListener("ended", () => {
-      if (toggleBtn) toggleBtn.textContent = toggleBtn.dataset.playLabel || "Play";
+      setToggleLabels(false);
       wave?.classList.remove("is-playing");
     });
   }
+
+  document.querySelectorAll('[data-action="shuffle"], [data-action="save"]').forEach((button) => {
+    button.addEventListener("click", () => {
+      button.classList.toggle("active");
+      button.setAttribute("aria-pressed", button.classList.contains("active") ? "true" : "false");
+    });
+  });
 
   document.querySelectorAll(".artist-follow-btn").forEach((followBtn) => {
     const artist = followBtn.dataset.followArtist || "artist";
@@ -99,8 +143,15 @@
   artworkNodes.forEach(async (node) => {
     const artist = node.dataset.artworkArtist || "";
     const title = node.dataset.artworkTitle || "";
-    const img = node.querySelector("img");
-    if (!artist || !title || !img) return;
+    let img = node.querySelector("img");
+    if (!artist || !title) return;
+    if (!img) {
+      const placeholder = node.querySelector(".mini-thumb");
+      if (!placeholder) return;
+      img = document.createElement("img");
+      img.alt = title;
+      placeholder.replaceWith(img);
+    }
 
     const cacheKey = `${artist} ${title}`.toLowerCase();
     const cached = artworkCache.get(cacheKey);

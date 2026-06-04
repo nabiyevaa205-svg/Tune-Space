@@ -1,41 +1,154 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
-{% block title %}{{ book.title }}{% endblock %}
+{% block title %}{{ book.title }} | TuneSpace{% endblock %}
 
 {% block content %}
-<article class="detail-card reveal">
-    <div class="detail-media">
-        {% if book.cover %}
-            <img class="detail-cover" src="{{ book.cover.url }}" alt="{{ book.title }}">
-        {% else %}
-            <div class="detail-cover cover-placeholder" aria-hidden="true"></div>
-        {% endif %}
-    </div>
-    <div>
-        <p class="eyebrow">{{ ui.now_playing }}</p>
-        <h1>{{ book.title }}</h1>
-        <p class="detail-artist"><strong>{{ ui.artist }}:</strong> {{ book.author }}</p>
-        <p class="detail-description">{{ book.description }}</p>
+<section class="play-page reveal">
+    <div class="play-shell">
+        <article class="play-main">
+            <header class="play-album-hero">
+                <div class="play-cover-wrap" data-artwork-title="{{ book.title }}" data-artwork-artist="{{ book.author.name }}">
+                    {% if cover_image %}
+                        <img class="play-cover" src="{{ cover_image }}" alt="{{ book.title }}">
+                    {% else %}
+                        <div class="play-cover cover-placeholder" aria-hidden="true"></div>
+                    {% endif %}
+                </div>
+                <div class="play-heading">
+                    <p class="eyebrow">{{ ui.now_playing }}</p>
+                    <h1>{{ book.title }}</h1>
+                    <p>
+                        <strong>{{ book.author.name }}</strong>
+                        <span>TuneSpace</span>
+                        <span>{{ artist_tracks|length }} {{ ui.tracks|lower }}</span>
+                    </p>
+                </div>
+            </header>
 
-        <div class="player-panel">
+            <div class="play-toolbar">
+                {% if book.audio_file %}
+                    <button class="play-main-toggle" type="button" data-action="toggle" data-play-label="{{ ui.play }}" data-pause-label="{{ ui.pause }}" aria-label="{{ ui.play }}">
+                        <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                    </button>
+                {% else %}
+                    <button class="play-main-toggle disabled" type="button" disabled aria-label="{{ ui.no_audio_uploaded }}">
+                        <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                    </button>
+                {% endif %}
+                <button class="play-icon-btn shuffle-btn" type="button" data-action="shuffle" aria-label="Shuffle">
+                    <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h13"></path><path d="m13 4 3 3-3 3"></path><path d="M21 17H8"></path><path d="m11 14-3 3 3 3"></path></svg>
+                </button>
+                <button class="play-icon-btn save-btn" type="button" data-action="save" aria-label="Add">
+                    <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+                </button>
+                {% if book.audio_file %}
+                    <a class="play-icon-btn download-btn" href="{{ book.audio_file.url }}" download aria-label="Download">
+                        <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="m8 12 4 4 4-4"></path></svg>
+                    </a>
+                {% else %}
+                    <button class="play-icon-btn download-btn disabled" type="button" disabled aria-label="{{ ui.no_audio_uploaded }}">
+                        <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="m8 12 4 4 4-4"></path></svg>
+                    </button>
+                {% endif %}
+                <a class="play-list-link" href="{% url 'home' %}">{{ ui.back_to_tracks }}</a>
+            </div>
+
+            <div class="play-track-list">
+                <div class="play-track-head">
+                    <span>#</span>
+                    <span>{{ ui.track_artist }}</span>
+                    <span>Time</span>
+                </div>
+                {% for track in artist_tracks %}
+                    <a class="play-track-row {% if track.pk == book.pk %}active{% endif %}" href="{{ track.url }}">
+                        <span class="track-index">
+                            {% if track.pk == book.pk %}
+                                <span class="track-equalizer" aria-hidden="true"><span></span><span></span><span></span></span>
+                            {% else %}
+                                {{ forloop.counter }}
+                            {% endif %}
+                        </span>
+                        {% if track.cover_image %}
+                            <span class="track-thumb" data-artwork-title="{{ track.title }}" data-artwork-artist="{{ track.author.name }}"><img src="{{ track.cover_image }}" alt="{{ track.title }}"></span>
+                        {% elif track.pk == book.pk and cover_image %}
+                            <span class="track-thumb" data-artwork-title="{{ track.title }}" data-artwork-artist="{{ track.author.name }}"><img src="{{ cover_image }}" alt="{{ track.title }}"></span>
+                        {% else %}
+                            <span class="track-thumb" data-artwork-title="{{ track.title }}" data-artwork-artist="{{ track.author.name }}"><span class="mini-thumb skin-{{ forloop.counter }}"></span></span>
+                        {% endif %}
+                        <span class="track-copy">
+                            <strong>{{ track.title }}</strong>
+                            <em>{{ track.author.name }}</em>
+                        </span>
+                        <span class="track-length">{% if track.audio_file %}--:--{% else %}{{ ui.no_audio }}{% endif %}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </article>
+
+        <aside class="play-side">
+            <h2>{{ book.title }}</h2>
+            {% if artist_image %}
+                <img src="{{ artist_image }}" alt="{{ book.author.name }}">
+            {% else %}
+                <div class="play-side-cover cover-placeholder" aria-hidden="true"></div>
+            {% endif %}
+            <div class="play-side-title">
+                <div>
+                    <h3>{{ book.title }}</h3>
+                    <p>{{ book.author.name }}</p>
+                </div>
+                <button class="side-save-btn" type="button" data-action="save" aria-label="Add">
+                    <svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+                </button>
+            </div>
+            <article class="play-credit-card">
+                <h4>{{ ui.artist }}</h4>
+                <p>{{ book.author.name }}</p>
+                <small>{{ book.description|truncatewords:22 }}</small>
+            </article>
+        </aside>
+    </div>
+
+    <footer class="play-bottom-bar">
+        <div class="play-now" data-artwork-title="{{ book.title }}" data-artwork-artist="{{ book.author.name }}">
+            {% if cover_image %}
+                <img src="{{ cover_image }}" alt="{{ book.title }}">
+            {% else %}
+                <span class="mini-thumb skin-1"></span>
+            {% endif %}
+            <div>
+                <strong>{{ book.title }}</strong>
+                <span>{{ book.author.name }}</span>
+            </div>
+        </div>
+
+        <div class="play-controls">
             {% if book.audio_file %}
                 <audio id="audio-player" preload="metadata">
                     <source src="{{ book.audio_file.url }}">
                     {{ ui.browser_no_audio }}
                 </audio>
-                <div class="wave" id="audio-wave"></div>
-                <div class="controls">
-                    <button type="button" class="btn control-btn" data-action="back">{{ ui.back_10 }}</button>
-                    <button type="button" class="btn control-btn" data-action="toggle" data-play-label="{{ ui.play }}" data-pause-label="{{ ui.pause }}">{{ ui.play }}</button>
-                    <button type="button" class="btn control-btn" data-action="forward">{{ ui.forward_10 }}</button>
-                </div>
-                <p id="audio-time" class="audio-time">00:00 / 00:00</p>
             {% else %}
-                <p class="audio-time">{{ ui.no_audio_uploaded }}</p>
+                <div class="missing-audio-note">{{ ui.no_audio_uploaded }}</div>
             {% endif %}
+            <div class="play-control-row">
+                <button type="button" data-action="back" aria-label="{{ ui.back_10 }}"><svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" x2="5" y1="19" y2="5"></line></svg></button>
+                <button class="bottom-toggle" type="button" data-action="toggle" data-play-label="{{ ui.play }}" data-pause-label="{{ ui.pause }}" aria-label="{{ ui.play }}"><svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg></button>
+                <button type="button" data-action="forward" aria-label="{{ ui.forward_10 }}"><svg class="ts-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" x2="19" y1="5" y2="19"></line></svg></button>
+            </div>
+            <div class="play-progress-row">
+                <span id="audio-current">00:00</span>
+                <div class="play-progress"><span id="audio-progress-fill"></span></div>
+                <span id="audio-duration">00:00</span>
+            </div>
+            <p id="audio-time" class="audio-time">{% if book.audio_file %}00:00 / 00:00{% else %}{{ ui.no_audio_uploaded }}{% endif %}</p>
+            <div class="wave" id="audio-wave"></div>
         </div>
 
-        <a class="btn btn-secondary" href="{% url 'home' %}">{{ ui.back_to_tracks }}</a>
-    </div>
-</article>
+        <div class="play-volume">
+            <label for="audio-volume">Vol</label>
+            <input id="audio-volume" type="range" min="0" max="1" step="0.01" value="0.72" aria-label="Volume">
+        </div>
+    </footer>
+</section>
 {% endblock %}

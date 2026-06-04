@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.translation import get_language
@@ -16,6 +17,14 @@ ARTIST_IMAGES = [
     "books/photo_all_woman.jpg",
     "books/photo_stay_with_me.jpg",
 ]
+
+INTERNET_ARTIST_IMAGES = {
+    "whitney houston": "https://commons.wikimedia.org/wiki/Special:FilePath/Whitney_Houston_Welcome_Home_Heroes_1_cropped.jpg",
+    "sam smith": "https://commons.wikimedia.org/wiki/Special:FilePath/Sam_Smith_2014.jpg",
+    "clean bandit": "https://commons.wikimedia.org/wiki/Special:FilePath/Clean_Bandit_2016.jpg",
+    "eagles": "https://commons.wikimedia.org/wiki/Special:FilePath/Eagles_band_2008.jpg",
+    "daniel castro": "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80",
+}
 
 ARTIST_ABOUT_IMAGES = {
     "bts": "https://commons.wikimedia.org/wiki/Special:FilePath/BTS_on_the_Billboard_Music_Awards_red_carpet%2C_1_May_2019.jpg",
@@ -191,12 +200,18 @@ def _artist_tracks(slug, image):
     ]
     tracks = []
     for index, (title, plays, duration) in enumerate(ARTIST_TRACKS.get(slug, [])):
+        book = Book.objects.filter(title__iexact=title).first()
+        fallback_slug = _track_slug(title)
         tracks.append({
+            "pk": book.pk if book else fallback_slug,
             "title": title,
             "plays": plays,
             "duration": duration,
+            "author": {"name": next((artist["name"] for artist in POPULAR_ARTISTS if artist["slug"] == slug), "Artist")},
             "image": image,
             "cover_image": cover_images[index % len(cover_images)],
+            "audio_file": bool(book and book.audio_file),
+            "url": reverse("book_detail", args=[book.pk]) if book else reverse("artist_track_play", args=[slug, fallback_slug]),
             "logo": "".join(word[0] for word in title.split()[:3]).upper(),
         })
     return tracks
@@ -242,6 +257,49 @@ def _artist_about_image(slug, fallback):
     return ARTIST_ABOUT_IMAGES.get(slug, fallback)
 
 
+def _track_slug(title):
+    slug = "".join(char.lower() if char.isalnum() else "_" for char in title)
+    return "_".join(part for part in slug.split("_") if part)
+
+
+def _track_cover(book):
+    title_slug = _track_slug(book.title)
+    for ext in ("png", "jpg"):
+        cover_path = f"books/{title_slug}.{ext}"
+        if default_storage.exists(cover_path):
+            return f"/media/{cover_path}"
+    if book.cover:
+        return book.cover.url
+    return None
+
+
+def _track_photo(book):
+    internet_image = INTERNET_ARTIST_IMAGES.get(book.author.name.lower())
+    if internet_image:
+        return internet_image
+
+    artist = next((item for item in POPULAR_ARTISTS if item["name"].lower() == book.author.name.lower()), None)
+    if artist:
+        return artist["image"]
+
+    artist_index = max(0, book.author_id - 1)
+    return f"/media/{_artist_image(artist_index)}"
+
+
+def _book_track_rows(books):
+    rows = []
+    for track in books:
+        rows.append({
+            "pk": track.pk,
+            "title": track.title,
+            "author": {"name": track.author.name},
+            "cover_image": _track_cover(track),
+            "audio_file": bool(track.audio_file),
+            "url": reverse("book_detail", args=[track.pk]),
+        })
+    return rows
+
+
 def _popular_artists(books):
     return [
         {
@@ -285,8 +343,8 @@ def _page_sections():
 def _book_list_context(books, **extra):
     context = {
         "books": books,
-        "top_albums": books[:5],
-        "latest_songs": books[:4],
+        "top_albums": books[:12],
+        "latest_songs": books,
         "featured": books.first(),
         "hero_artist": POPULAR_ARTISTS[5],
         "hero_image": "https://i.pinimg.com/originals/93/9e/cd/939ecdf241815e1de953bc9d27369fcf.jpg",
@@ -309,7 +367,43 @@ def book_search(request, slug):
 
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    return render(request, "books/book_detail.html", {"book": book})
+    artist_tracks = (
+        Book.objects.filter(author=book.author)
+        .select_related("author")
+        .order_by("-audio_file", "-created_at")
+    )
+    return render(request, "books/book_detail.html", {
+        "book": book,
+        "artist_tracks": _book_track_rows(artist_tracks),
+        "cover_image": _track_cover(book),
+        "artist_image": _track_photo(book),
+    })
+
+
+def artist_track_play(request, slug, track_slug):
+    ui = get_ui_text(get_language())
+    artist = next((item for item in POPULAR_ARTISTS if item["slug"] == slug), None)
+    if artist is None:
+        return HttpResponseRedirect(reverse("home"))
+
+    tracks = _artist_tracks(slug, artist["image"])
+    track = next((item for item in tracks if item["pk"] == track_slug), None)
+    if track is None:
+        return HttpResponseRedirect(reverse("artist_profile", args=[slug]))
+
+    book = {
+        "pk": track["pk"],
+        "title": track["title"],
+        "author": {"name": artist["name"]},
+        "description": ui.get(artist["bio_key"], ""),
+        "audio_file": None,
+    }
+    return render(request, "books/book_detail.html", {
+        "book": book,
+        "artist_tracks": tracks,
+        "cover_image": track["cover_image"],
+        "artist_image": artist["image"],
+    })
 
 
 def artist_detail(request, pk):
@@ -363,7 +457,7 @@ def article_detail(request, slug):
 
 def about(request):
     ui = get_ui_text(get_language())
-    return HttpResponse(ui["about"])
+    return render(request, "books/about.html", {"ui": ui})
 
 
 def user_profile(request, user_id):

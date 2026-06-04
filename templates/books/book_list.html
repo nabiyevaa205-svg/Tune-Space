@@ -63,7 +63,7 @@
     <div class="song-row" id="track-grid">
         {% if latest_songs %}
             {% for book in latest_songs %}
-                <article class="song-card" data-track="{{ book.title|lower }}" data-artist="{{ book.author|lower }}">
+                <a class="song-card" href="{% url 'book_detail' book.pk %}" data-track="{{ book.title|lower }}" data-artist="{{ book.author|lower }}" data-artwork-title="{{ book.title }}" data-artwork-artist="{{ book.author.name }}">
                     {% if book.cover %}
                         <img src="{{ book.cover.url }}" alt="{{ book.title }}">
                     {% else %}
@@ -77,9 +77,9 @@
                         {% else %}
                             <span class="play-badge muted">{{ ui.no_audio }}</span>
                         {% endif %}
-                        <a class="mini-link" href="{% url 'book_detail' book.pk %}">{{ ui.open }}</a>
+                        <span class="mini-link">{{ ui.open }}</span>
                     </div>
-                </article>
+                </a>
             {% endfor %}
         {% else %}
             <p>{{ ui.no_songs }}</p>

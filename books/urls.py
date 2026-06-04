@@ -9,6 +9,7 @@ urlpatterns = [
     path("template-demo/", views.template_demo, name="template_demo"),
     path("books/<int:pk>/", views.book_detail, name="book_detail"),
     path("articles/<slug:slug>/", views.article_detail, name="article_detail"),
+    path("artists/profile/<slug:slug>/play/<slug:track_slug>/", views.artist_track_play, name="artist_track_play"),
     path("artists/profile/<slug:slug>/", views.artist_profile, name="artist_profile"),
     path("artists/<int:pk>/", views.artist_detail, name="artist_detail"),
     path("books/search/<slug:slug>/", views.book_search, name="book_search"),
